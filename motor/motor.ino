@@ -201,40 +201,22 @@ void Tracking() {
 void PIDTracking() {
   int threshold=100;
   int threshold_m=40;
-  int l3 = analogRead(analogPin5);
-  int l2 = analogRead(analogPin4);
-  int m = analogRead(analogPin3);
-  int r2 = analogRead(analogPin2);
-  int r3 = analogRead(analogPin1);
+  bool l3 = analogRead(analogPin5)>=threshold;
+  bool l2 = analogRead(analogPin4)>=threshold;
+  bool m = analogRead(analogPin3)>=threshold_m;
+  bool r2 = analogRead(analogPin2)>=threshold;
+  bool r3 = analogRead(analogPin1)>=threshold;
   static int count = 0;
-  if ((l3 >=threshold) && (l2 <threshold) && (m <threshold_m) && (r2 <threshold) && (r3 <threshold)) {
-    MotorWriting(100, 200); // very big left turn
-  } else if ((l3 >=threshold) && (l2 >=threshold) && (m <threshold_m) && (r2 <threshold) && (r3 <threshold)) {
-    MotorWriting(120, 200); // big left turn
-  } else if ((l3 <threshold) && (l2 >=threshold) && (m <threshold_m) && (r2 <threshold) && (r3 <threshold)) {
-    MotorWriting(140, 200); // left turn
-  } else if ((l3 <threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 <threshold) && (r3 <threshold)) {
-    MotorWriting(155, 200); // small left turn
-  } else if ((l3 <threshold) && (l2 <threshold) && (m >=threshold_m) && (r2 <threshold) && (r3 <threshold)) {
-    MotorWriting(178, 200); // GO straight
-    // if((l3 <threshold) && (l2 <threshold) && (m <threshold_m) && (r2 <threshold) && (r3 <threshold))
-    // {
-    //   MotorWriting(0, 0);
-    //     delay(1000);
-    //     MotorWriting(-178, 200);
-    //     delay(700); 
-    // }
-  } else if ((l3 <threshold) && (l2 <threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 <threshold)) {
-    MotorWriting(178, 180); // small right turn
-  } else if ((l3 <threshold) && (l2 <threshold) && (m <threshold_m) && (r2 >=threshold) && (r3 <threshold)) {
-    MotorWriting(178, 160); // right turn
-  } else if ((l3 <threshold) && (l2 ==LOW) && (m <threshold_m) && (r2 >=threshold) && (r3 >=threshold)) {
-    MotorWriting(178, 140); // big right turn
-  } else if ((l3 <threshold) && (l2 <threshold) && (m <threshold_m) && (r2 <threshold) && (r3 >=threshold)) {
-    MotorWriting(178, 100); // very big right turn
-  } else if ((l3 <threshold) && (l2 <threshold) && (m <threshold_m) && (r2 <threshold) && (r3 <threshold)) {
-    MotorWriting(100, 100);
-  } else if((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)) {
+  double w[5]  = {0.4, 0.2 ,0, -0.2 , -0.5};
+  double error = (l3*w[0]+l2*w[1]+r2*w[3]+r3*w[4])/(l3 + l2 + m + r2 +r3);
+  int Kp = 100 ;
+  int powerCorrection =Kp * error; // ex. Kp = 100, 也與 w2 & w3 有關
+  int vR =178-powerCorrection; // ex. Tp = 150, 也與 w2 & w3 有關
+  int vL =200 +powerCorrection;
+  if(vR>255) vR = 255;
+  if(vL>255) vL = 255;
+  MotorWriting(vL, vR);
+  if((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)) {
     switch(count) {
       case 0: {
         right(); count++;break;
@@ -343,8 +325,4 @@ void PIDTracking() {
 
 //   // stop
 // 	digitalWrite(AIN1, LOW);
-// 	digitalWrite(AIN2, LOW);
-// 	digitalWrite(BIN1, LOW);
-// 	digitalWrite(BIN2, LOW);
-// 	delay(threshold0);
-// }
+/
