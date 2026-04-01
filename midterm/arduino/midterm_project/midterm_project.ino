@@ -21,24 +21,23 @@
 // 19    RX       <-  TX
 // TB6612, 請按照自己車上的接線寫入腳位(左右不一定要跟註解寫的一樣)
 // TODO: 請將腳位寫入下方
-#define MotorR_I1 0     // 定義 A1 接腳（右）
-#define MotorR_I2 0     // 定義 A2 接腳（右）
-#define MotorR_PWMR 0  // 定義 ENA (PWM調速) 接腳
-#define MotorL_I3 0     // 定義 B1 接腳（左）
-#define MotorL_I4 0     // 定義 B2 接腳（左）
-#define MotorL_PWML 0  // 定義 ENB (PWM調速) 接腳
-// 循線模組, 請按照自己車上的接線寫入腳位
-#define IRpin_LL 0
-#define IRpin_L 0
-#define IRpin_M 0
-#define IRpin_R 0
-#define IRpin_RR 0
-// RFID, 請按照自己車上的接線寫入腳位
-#define RST_PIN 0                 // 讀卡機的重置腳位
-#define SS_PIN 0                  // 晶片選擇腳位
-MFRC522 mfrc522(SS_PIN, RST_PIN);  // 建立MFRC522物件
+int PWMA = 10;
+int AIN2 = 6;
+int AIN1 = 7;
+//right
+int BIN1 = 8;
+int BIN2 = 9;
+int PWMB = 11;
+//IR
+#define analogPin1 A3
+#define analogPin2 A4
+#define analogPin3 A5
+#define analogPin4 A6
+#define analogPin5 A7
+#define RST_PIN 3
+#define SS_PIN 2
 // BT
-#define CUSTOM_NAME "HM10_Mega" // Max length is 12 characters [1]
+#define CUSTOM_NAME "HM10_Car2"   // Max length is 12 characters [1]
 
 /*===========================define pin & create module object===========================*/
 
@@ -52,18 +51,21 @@ void setup() {
     SPI.begin();
     mfrc522.PCD_Init();
     // TB6612 pin
-    pinMode(MotorR_I1, OUTPUT);
-    pinMode(MotorR_I2, OUTPUT);
-    pinMode(MotorL_I3, OUTPUT);
-    pinMode(MotorL_I4, OUTPUT);
-    pinMode(MotorL_PWML, OUTPUT);
-    pinMode(MotorR_PWMR, OUTPUT);
+    pinMode(PWMA, OUTPUT);
+    pinMode(PWMB, OUTPUT);
+
+    pinMode(AIN1, OUTPUT);
+    pinMode(AIN2, OUTPUT);
+
+    pinMode(BIN1, OUTPUT);
+    pinMode(BIN2, OUTPUT);
     // tracking pin
-    pinMode(IRpin_LL, INPUT);
-    pinMode(IRpin_L, INPUT);
-    pinMode(IRpin_M, INPUT);
-    pinMode(IRpin_R, INPUT);
-    pinMode(IRpin_RR, INPUT);
+    pinMode(analogPin1 , INPUT);
+    pinMode(analogPin2 , INPUT);
+    pinMode(analogPin3 , INPUT);
+    pinMode(analogPin4 , INPUT);
+    pinMode(analogPin5 , INPUT);
+    mfrc522 = new MFRC522(SS_PIN, RST_PIN);
 #ifdef DEBUG
     Serial.println("Start!");
 #endif
@@ -109,3 +111,22 @@ void Search() {
     // code)
 }
 /*===========================define function===========================*/
+void SetState() {
+    int threshold=100;
+    int threshold_m=40;
+    int l3 = analogRead(analogPin5);
+    int l2 = analogRead(analogPin4);
+    int m = analogRead(analogPin3);
+    int r2 = analogRead(analogPin2);
+    int r3 = analogRead(analogPin1);
+    if((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)) {
+        enterblack(count, cmd, send_byte());
+    }
+    else{
+        tracking(l3,l2,m,r2,r3);
+    }
+    // TODO:
+    // 1. Get command from bluetooth
+    // 2. Change state if need
+    if 
+}

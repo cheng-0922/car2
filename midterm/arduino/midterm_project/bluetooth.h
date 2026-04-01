@@ -22,6 +22,13 @@ BT_CMD ask_BT() {
 // TODO:
 // 1. get cmd from Serial3(bluetooth serial)
 // 2. link bluetooth message to your own command type
+    char cmd=Serial3.read();
+    switch(cmd){
+        case 'a': {return a;}
+        case 'w': {return w;}
+        case 's': {return s;}
+        case 'd': {return d;}
+    }
 #ifdef DEBUG
         Serial.print("cmd : ");
         Serial.println(cmd);
@@ -34,7 +41,7 @@ BT_CMD ask_BT() {
 // can use send_byte alternatively to send msg back
 // (but need to convert to byte type)
 void send_msg(const char& msg) {
-    // TODO:
+    Serial3.print(msg);
 }  // send_msg
 
 // send UID back through Serial3(bluetooth serial)

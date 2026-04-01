@@ -52,9 +52,9 @@ void MotorWriting(double vL, double vR) {
 }  // MotorWriting
 
 // Handle negative motor_PWMR value.
-void MotorInverter(int motor, bool& dir) {
-    // Hint: the value of motor_PWMR must between 0~255, cannot write negative value.
-}  // MotorInverter
+// void MotorInverter(int motor, bool& dir) {
+//     // Hint: the value of motor_PWMR must between 0~255, cannot write negative value.
+// }  // MotorInverter
 
 // P/PID control Tracking
 void tracking(int l2, int l1, int m0, int r1, int r2) {

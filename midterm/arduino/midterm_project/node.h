@@ -5,7 +5,7 @@
 // Functions  [/* add on your own! */]
 // Modify		  [2020/03/027 Erik Kuo]
 /***************************************************************************/
-
+#include "track.h"
 /*===========================import variable===========================*/
 int extern _Tp;
 /*===========================import variable===========================*/
@@ -26,6 +26,7 @@ int PWMB = 11;
 #define analogPin5 A7
 // TODO: add some function to control your car when encounter a node
 // here are something you can try: left_turn, right_turn... etc.
+
 void back(void(*f)()){
       int threshold=100;
   int threshold_m=40;
