@@ -109,12 +109,13 @@ void setup() {
 
 void loop() {
   // 1. Module to PC: Forward HM-10 responses to the Serial Monitor
+  static char cmd='q';
   if (Serial3.available()) {
-    String cmd=Serial3.readString();
-
+    char cmd=Serial3.read();
+    Serial3.print(cmd);
   }
   
-  Tracking(0, (read));
+  Tracking(cmd, (read));
   read();
 
   //   // 2. PC to Module: Read user input and truncate line endings
