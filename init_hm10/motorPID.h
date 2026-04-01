@@ -167,45 +167,9 @@ void Tracking(char cmd, void(*f)()) {
   MotorWriting(vL, vR);
   static int count=0;
   
-  if((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)) {
-    if(cmd!='q'){
-      if(cmd=='w') ;
-      if(cmd=='a') left(f);
-      if(cmd=='d') right(f);
-      if(cmd=='s') back(f);
-      cmd='q';
-    }
-    else{
-      switch(count) {
-        case 0: {
-          right(f); count++;break;
-        }
-        case 1: {
-          back(f); count++; break;
-        }
-        case 2: {
-          MotorWriting(178, 200);
-          delay(500);
-          count++;
-          break;
-        
-      
-        }
-        case 3: {
-          back(f); count++; break;
-        }
-        case 4:{
-          left(f); count++; break;
-        }
-        case 5: {
-          back(f); count=0; break;
-        }
-      }
-      }
-      
-    }
-    lastError=error;
+
+  lastError=error;
   
     
-  }
+}
 

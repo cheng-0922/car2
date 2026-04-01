@@ -36,34 +36,6 @@ void setup() {
 
 }
 
-void loop() {
-  // analogWrite(PWMA, 128);
-  // analogWrite(PWMB, 128);
-
-  Tracking();
-//   int sensorValue1 = analogRead(analogPin1);
-// int sensorValue2 = analogRead(analogPin2);
-// int sensorValue3 = analogRead(analogPin3);
-// int sensorValue4 = analogRead(analogPin4);
-// int sensorValue5 = analogRead(analogPin5);
-//  Serial.println(sensorValue1);
-
-
-//  Serial.println(sensorValue2);
-// // Serial.println(F("**Sensor2 Detected:**"));
-
-// Serial.println(sensorValue3);
-// // Serial.println(F("**Sensor3 Detected:**"));
-
-// Serial.println(sensorValue4);
-// // Serial.println(F("**Sensor4 Detected:**"));
-
-// Serial.println(sensorValue5);
-// Serial.println(F("**Sensor5 Detected:**"));
-// delay(500);
-// // 
-
-}
 
 void MotorWriting(double vL, double vR) {
   if (vR >= 0) {
