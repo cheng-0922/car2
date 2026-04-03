@@ -63,29 +63,29 @@ void setup() {
     return;
   }
 
-  // 3. Restore Factory Defaults
-  // Serial.println("Restoring factory defaults...");
-  sendATCommand("AT+RENEW");  // Restores all setup values
-  delay(500);
+  // // 3. Restore Factory Defaults
+  // // Serial.println("Restoring factory defaults...");
+  // sendATCommand("AT+RENEW");  // Restores all setup values
+  // delay(500);
 
-  // 4. Set Custom Name via Macro
-  // Serial.print("Setting name to: ");
-  // Serial.println(CUSTOM_NAME);
-  String nameCmd = "AT+NAME" + String(CUSTOM_NAME);
-  sendATCommand(nameCmd.c_str());  // Max length is 12
+  // // 4. Set Custom Name via Macro
+  // // Serial.print("Setting name to: ");
+  // // Serial.println(CUSTOM_NAME);
+  // String nameCmd = "AT+NAME" + String(CUSTOM_NAME);
+  // sendATCommand(nameCmd.c_str());  // Max length is 12
 
-  // 5. Enable Connection Notifications
-  // Serial.println("Enabling notifications...");
-  sendATCommand("AT+NOTI1");  // Notify when link is established/lost
+  // // 5. Enable Connection Notifications
+  // // Serial.println("Enabling notifications...");
+  // sendATCommand("AT+NOTI1");  // Notify when link is established/lost
 
-  // 6. Get the Bluetooth MAC Address
-  // Serial.println("Querying Bluetooth Address");
-  sendATCommand("AT+ADDR?");
+  // // 6. Get the Bluetooth MAC Address
+  // // Serial.println("Querying Bluetooth Address");
+  // sendATCommand("AT+ADDR?");
 
-  // 7. Restart the module to apply changes
-  // Serial.println("Restarting module...");
-  sendATCommand("AT+RESET");  // Restart the module
-  delay(1000);
+  // // 7. Restart the module to apply changes
+  // // Serial.println("Restarting module...");
+  // sendATCommand("AT+RESET");  // Restart the module
+  // delay(1000);
   Serial3.begin(9600);  // Now the module would use baudrate 9600
 
   // Serial.println("Initialization Complete.");
@@ -109,13 +109,13 @@ void setup() {
 
 void loop() {
   // 1. Module to PC: Forward HM-10 responses to the Serial Monitor
-  static char cmd='q';
+  control('x');
   if (Serial3.available()) {
-    char cmd=Serial3.read();
-    Serial3.print(cmd);
+    control(Serial3.read());
+    Serial3.print(control('0'));
   }
   
-  Tracking(cmd, (read));
+  if(control('0')!='x'){Tracking(control('0'), (read));}
   read();
 
   //   // 2. PC to Module: Read user input and truncate line endings
@@ -209,3 +209,11 @@ void PICC_DumpDetails(Print &output, MFRC522::Uid *uid  ///< Pointer to Uid stru
   // output.print(F("PICC type: "));
   // output.println(mfrc522->PICC_GetTypeName(piccType));
 }  // End PICC_DumpDetailsToSerial()
+
+char control(char _cmd){
+  
+  static char cmd = 'x';
+  if(_cmd=='0') return cmd;
+  cmd=_cmd;
+  return cmd;
+}

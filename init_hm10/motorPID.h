@@ -143,7 +143,9 @@ void Tracking(char cmd, void(*f)()) {
   double w3= 1;
   double w4= 4;
   double Kp= 100;
-  static double stady[2] = {250,220};
+  // static double stady[2] = {250,220};
+  static double stady[2] = {200,178};
+
   double Tpr=stady[0];
   double Tpl=stady[1];
   double error = (l3*(-w1) + l2*(-w2) + r2*w3 + r3*w4)/(l3 + l2 + m + r2 + r3);
@@ -162,34 +164,45 @@ void Tracking(char cmd, void(*f)()) {
   if(vL>231) vL = 231;
   if(vR<-255) vR = -255;
   if(vL<-231) vL = -231;
-  MotorWriting(vL, vR);
+  if(cmd!='x') MotorWriting(vL, vR);
+  else MotorWriting(0,0);
   static int count=0;
   if((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)) {
-    switch(count) {
-      case 0: {
-        
-        right(f); count++;break;
-      }
-      case 1: {
-        back(f); count++; break;
-      }
-      case 2: {
-        MotorWriting(178, 200);
-        delay(500);
-        count++;
-        break;
+    if(cmd!='q'){
+      if(cmd=='a') left(f);
+      if(cmd=='d') right(f);
+      if(cmd=='s') back(f);
+    }
+    else{
+      right(f);
+      /*
+      switch(count) {
+        case 0: {
+          
+          right(f); count++;break;
+        }
+        case 1: {
+          back(f); count++; break;
+        }
+        case 2: {
+          // MotorWriting(178, 200);
+          // delay(500);
+          // count++;
+          // break;
+          left(f); count++; break;
       
-    
+        }
+        case 3: {
+          back(f); count++; break;
+        }
+        case 4:{
+          left(f); count++; break;
+        }
+        case 5: {
+          back(f); count=0; break;
+        }
       }
-      case 3: {
-        back(f); count++; break;
-      }
-      case 4:{
-        left(f); count++; break;
-      }
-      case 5: {
-        back(f); count=0; break;
-      }
+      */
     }
   }
   lastError=error;
