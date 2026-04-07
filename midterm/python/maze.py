@@ -109,29 +109,30 @@ class Maze:
             v=parent[v]
         path = path[::-1]
 
-        final_path = ""
-        last_dir=-1
-        for i in range(1, len(path)):
-            target_node = path[i]
-            prev_node = path[i-1]
+        return path
+        # final_path = ""
+        # last_dir=-1
+        # for i in range(1, len(path)):
+        #     target_node = path[i]
+        #     prev_node = path[i-1]
 
-            curr_dir = moveDir[target_node]
-            if i == 1:
-                final_path += "f"
-            else:
-                last_dir=moveDir[prev_node]
-                if last_dir == curr_dir:
-                    final_path += "f"
-                elif (last_dir == 1 and curr_dir == 4) or (last_dir == 2 and curr_dir == 3) or \
-                    (last_dir == 3 and curr_dir == 1) or (last_dir == 4 and curr_dir == 2):
-                    final_path += "r"
-                elif (last_dir == 1 and curr_dir == 3) or (last_dir == 2 and curr_dir == 4) or \
-                    (last_dir == 3 and curr_dir == 2) or (last_dir == 4 and curr_dir == 1):
-                    final_path += "l"
-                else:
-                    final_path += "b"
+        #     curr_dir = moveDir[target_node]
+        #     if i == 1:
+        #         final_path += "f"
+        #     else:
+        #         last_dir=moveDir[prev_node]
+        #         if last_dir == curr_dir:
+        #             final_path += "f"
+        #         elif (last_dir == 1 and curr_dir == 4) or (last_dir == 2 and curr_dir == 3) or \
+        #             (last_dir == 3 and curr_dir == 1) or (last_dir == 4 and curr_dir == 2):
+        #             final_path += "r"
+        #         elif (last_dir == 1 and curr_dir == 3) or (last_dir == 2 and curr_dir == 4) or \
+        #             (last_dir == 3 and curr_dir == 2) or (last_dir == 4 and curr_dir == 1):
+        #             final_path += "l"
+        #         else:
+        #             final_path += "b"
                 
-        return final_path
+        # return final_path
 
         return None
     def testBFS(self, node_from:int, node_to):
@@ -143,12 +144,45 @@ class Maze:
         # TODO : get the car action
         # Tips : return an action and the next direction of the car if the node_to is the Successor of node_to
         # If not, print error message and return 0
-        return None
+        future_dir= node_from.get_direction(node_to)
+        if future_dir==0:
+            return None
+        
+        
+        if ( car_dir==1 and future_dir==2 ) or (car_dir==3 and future_dir ==4) or \
+            ( car_dir==2 and future_dir==1) or ( car_dir==4 and future_dir==3 ):
+            return Action(2)
+        elif ( car_dir==1 and future_dir==3) or ( car_dir==2 and future_dir==4 ) or \
+            ( car_dir==3 and future_dir==2 ) or ( car_dir==4 and future_dir==1 ):
+            return Action(4)
+        elif ( car_dir==1 and future_dir==4 ) or ( car_dir==2 and future_dir==3 ) or\
+            ( car_dir==3 and future_dir==1 ) or ( car_dir==4 and future_dir==2 ):
+            return Action(3)
+        elif car_dir==future_dir:
+            return Action(1)
+        else:
+            return 0
+        
 
     def getActions(self, nodes: List[Node]):
         # TODO : given a sequence of nodes, return the corresponding action sequence
         # Tips : iterate through the nodes and use getAction() in each iteration
-        return None
+        acts=[]
+        curr_dir=0
+        
+        for i in range(1,len(nodes)):
+            target_node = nodes[i]
+            prev_node = nodes[i-1]
+
+            if i==1:
+                acts.append(Action(1))
+            else:
+                acts.append(self.getAction(curr_dir,prev_node,target_node))
+
+            
+            curr_dir = prev_node.get_direction(target_node)
+
+        return acts
 
     def actions_to_str(self, actions):
         # cmds should be a string sequence like "fbrl....", use it as the input of BFS checklist #1
@@ -166,4 +200,6 @@ class Maze:
         return self.BFS_2(node_from, node_to)
 
 m = Maze('maze (1).csv')
-print(m.testBFS(1,10))
+nodelist = m.testBFS(1,10)
+acts = m.getActions(nodelist)
+print(m.actions_to_str(acts))
