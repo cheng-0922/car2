@@ -48,21 +48,24 @@ void back(void(*f)()){
   int l3 = analogRead(analogPin5);
   int l2 = analogRead(analogPin4);
   int m = analogRead(analogPin3);
-  int r2 = analogRead(analogPin2);
+  int r2 = 26.625*analogRead(analogPin2)-607;
   int r3 = analogRead(analogPin1);
 
   MotorWriting(220, -250);
   delay(300);
   f();
   while(true){
+      f();
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
       int m = analogRead(analogPin3);
-      int r2 = analogRead(analogPin2);
+      int r2 = 26.625*analogRead(analogPin2)-607;
       int r3 = analogRead(analogPin1);
       if((l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold))
         break;
       MotorWriting(178, -200);
+      f();
+      delay(1);
   }
 
   
@@ -78,19 +81,19 @@ void right(void(*f)()){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
       int m = analogRead(analogPin3);
-      int r2 = analogRead(analogPin2);
+      int r2 = 26.625*analogRead(analogPin2)-607;
       int r3 = analogRead(analogPin1);
       if(!((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)))
         break;
       MotorWriting(178, 200);
     }
   MotorWriting(200,0); 
-  delay(700);
+  delay(350);
   while(true){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
       int m = analogRead(analogPin3);
-      int r2 = analogRead(analogPin2);
+      int r2 = 26.625*analogRead(analogPin2)-607;
       int r3 = analogRead(analogPin1);
       if((l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold))
         break;
@@ -107,7 +110,7 @@ void left(void(*f)()){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
       int m = analogRead(analogPin3);
-      int r2 = analogRead(analogPin2);
+      int r2 = 26.625*analogRead(analogPin2)-607;
       int r3 = analogRead(analogPin1);
       
       if(!((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)))
@@ -121,7 +124,7 @@ void left(void(*f)()){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
       int m = analogRead(analogPin3);
-      int r2 = analogRead(analogPin2);
+      int r2 = 26.625*analogRead(analogPin2)-607;
       int r3 = analogRead(analogPin1);
       f();
       if((l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold))
@@ -130,19 +133,20 @@ void left(void(*f)()){
     }
 
 }
-void Tracking(char cmd, void(*f)()) {
+char Tracking(char cmd, void(*f)()) {
   int threshold=100;
   int threshold_m=40;
   int l3 = analogRead(analogPin5);
   int l2 = analogRead(analogPin4);
   int m = analogRead(analogPin3);
-  int r2 = analogRead(analogPin2);
+  int r2 = 26.625*analogRead(analogPin2)-607;
   int r3 = analogRead(analogPin1);
   double w1= 5;
   double w2= 1;
   double w3= 1;
   double w4= 4;
   double Kp= 100;
+
   // static double stady[2] = {250,220};
   static double stady[2] = {200,178};
 
@@ -164,33 +168,44 @@ void Tracking(char cmd, void(*f)()) {
   if(vL>231) vL = 231;
   if(vR<-255) vR = -255;
   if(vL<-231) vL = -231;
-  if(cmd!='x') MotorWriting(vL, vR);
-  else MotorWriting(0,0);
+  
+  
+  
+  MotorWriting(vL, vR);
+  
   static int count=0;
   if((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)) {
+    // Serial3.print("Entering node");
     if(cmd!='q'){
-      if(cmd=='a') left(f);
-      if(cmd=='d') right(f);
-      if(cmd=='s') back(f);
+      if(cmd=='a') {
+        // Serial3.print("left turn");
+        left(f);
+      }
+      if(cmd=='d'){
+        // Serial3.print("right turn");
+        right(f);
+      }
+      if(cmd=='s') {
+        // Serial3.print("right turn");
+        back(f);
+        f();
+      }
+      return 'q';
     }
-    else{
-      right(f);
-      /*
+    
+    if(cmd == 'z'){
       switch(count) {
         case 0: {
-          
           right(f); count++;break;
         }
         case 1: {
           back(f); count++; break;
         }
         case 2: {
-          // MotorWriting(178, 200);
-          // delay(500);
-          // count++;
-          // break;
-          left(f); count++; break;
-      
+          MotorWriting(178, 200);
+          delay(500);
+          count++;
+          break;
         }
         case 3: {
           back(f); count++; break;
@@ -202,10 +217,13 @@ void Tracking(char cmd, void(*f)()) {
           back(f); count=0; break;
         }
       }
-      */
     }
-  }
-  lastError=error;
     
+  }
+
+  
+
+  lastError=error;
+  return cmd;
 }
 

@@ -66,6 +66,29 @@ void setup() {
     pinMode(analogPin4 , INPUT);
     pinMode(analogPin5 , INPUT);
     mfrc522 = new MFRC522(SS_PIN, RST_PIN);
+
+
+    for (int i = 0; i < 9; i++) {
+    // Serial.print("Testing baud rate: ");
+    // Serial.println(baudRates[i]);
+
+    Serial3.begin(baudRates[i]);
+    Serial3.setTimeout(100);
+    delay(100);
+
+    // 2. Force Disconnection
+    // Sending "AT" while connected forces the module to disconnect [2].
+    Serial3.print("AT");
+
+    if (waitForResponse("OK", 800)) {
+      // Serial.println("HM-10 detected and ready.");
+      moduleReady = true;
+      break;
+    } else {
+      Serial3.end();
+      delay(100);
+    }
+  }
 #ifdef DEBUG
     Serial.println("Start!");
 #endif
@@ -104,14 +127,13 @@ void SetState() {
     // TODO:
     // 1. Get command from bluetooth
     // 2. Change state if need
+    _cmd=ask_BT();
+
 }
 
 void Search() {
     // TODO: let your car search graph(maze) according to bluetooth command from computer(python
     // code)
-}
-/*===========================define function===========================*/
-void SetState() {
     int threshold=100;
     int threshold_m=40;
     int l3 = analogRead(analogPin5);
@@ -125,8 +147,7 @@ void SetState() {
     else{
         tracking(l3,l2,m,r2,r3);
     }
-    // TODO:
-    // 1. Get command from bluetooth
-    // 2. Change state if need
-    if 
 }
+/*===========================define function===========================*/
+
+

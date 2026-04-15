@@ -55,33 +55,46 @@ class Maze:
         # Tips : return a sequence of nodes from the node to the nearest unexplored deadend
         visited=[]
         parent=dict()
-        moveDir=dict()
         # use Node as key to store in visitd,parent 
         if node not in self.nodes:
-            return False
+            return None
 
         queue = deque([node])
         visited.append(node)
         # nodes[start_node]['visited'] = True
-
+        node_to=Node()
         while queue:
             u = queue.popleft()
-            for i in u.get_successors:
-                v=self.node_dict[i[0]]
-                if i[0] > 0 and v in self.nodes and v[0] not in visited: #and not nodes[v]['visited']
+            if len(u.get_successors())==1 and u != node:
+                    node_to=u
+                    break
+            for i in u.get_successors():
+                
+                v = i[0]
+                if v in self.nodes and v not in visited: #and not nodes[v]['visited']
                     visited.append(v)
                     parent[v]=u
-                    moveDir[v]=i[1]
                     queue.append(v)
 
-        return None
+        path=[]
+        
+
+        while(v in self.nodes):
+            path.append(v)
+            if v==node: break
+            v=parent[v]
+        path = path[::-1]
+
+        return path
+    
+    def testBFS(self, node_from:int):
+        return self.BFS(self.node_dict[node_from])
 
     def BFS_2(self, node_from: Node, node_to: Node):
         # TODO : similar to BFS but with fixed start point and end point
         # Tips : return a sequence of nodes of the shortest path
         visited=[]
         parent=dict()
-        moveDir=dict()
         # use Node as key to store in visitd,parent 
         if node_from not in self.nodes:
             return None
@@ -97,7 +110,6 @@ class Maze:
                 if v in self.nodes and v not in visited: #and not nodes[v]['visited']
                     visited.append(v)
                     parent[v]=u
-                    moveDir[v]=i[1]
                     queue.append(v)
 
         path=[]
@@ -110,32 +122,9 @@ class Maze:
         path = path[::-1]
 
         return path
-        # final_path = ""
-        # last_dir=-1
-        # for i in range(1, len(path)):
-        #     target_node = path[i]
-        #     prev_node = path[i-1]
-
-        #     curr_dir = moveDir[target_node]
-        #     if i == 1:
-        #         final_path += "f"
-        #     else:
-        #         last_dir=moveDir[prev_node]
-        #         if last_dir == curr_dir:
-        #             final_path += "f"
-        #         elif (last_dir == 1 and curr_dir == 4) or (last_dir == 2 and curr_dir == 3) or \
-        #             (last_dir == 3 and curr_dir == 1) or (last_dir == 4 and curr_dir == 2):
-        #             final_path += "r"
-        #         elif (last_dir == 1 and curr_dir == 3) or (last_dir == 2 and curr_dir == 4) or \
-        #             (last_dir == 3 and curr_dir == 2) or (last_dir == 4 and curr_dir == 1):
-        #             final_path += "l"
-        #         else:
-        #             final_path += "b"
-                
-        # return final_path
 
         return None
-    def testBFS(self, node_from:int, node_to):
+    def testBFS2(self, node_from:int, node_to):
         return self.BFS_2(self.node_dict[node_from],self.node_dict[node_to])
     
 
@@ -200,6 +189,9 @@ class Maze:
         return self.BFS_2(node_from, node_to)
 
 m = Maze('maze (1).csv')
-nodelist = m.testBFS(1,10)
+nodelist = m.testBFS2(1,10)
+acts = m.getActions(nodelist)
+print(m.actions_to_str(acts))
+nodelist = m.testBFS(1)
 acts = m.getActions(nodelist)
 print(m.actions_to_str(acts))

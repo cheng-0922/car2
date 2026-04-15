@@ -106,16 +106,51 @@ void setup() {
   pinMode(analogPin5, INPUT);  // 目前預設該接腳作為輸入
   // Serial.begin(9600);
 }
+char cmd='x';
 
 void loop() {
   // 1. Module to PC: Forward HM-10 responses to the Serial Monitor
-  control('x');
+
   if (Serial3.available()) {
-    control(Serial3.read());
-    Serial3.print(control('0'));
+    // control(Serial3.read());
+    // Serial3.print(control('0'));
+    cmd = Serial3.read();
+    Serial3.print(cmd);
   }
-  
-  if(control('0')!='x'){Tracking(control('0'), (read));}
+  if(cmd=='r'){
+    MotorWriting(0,0);
+    read();
+  }
+  else if (cmd=='k'){
+    int l3 = analogRead(analogPin5);
+    int l2 = analogRead(analogPin4);
+    int m = analogRead(analogPin3);
+    int r2 = 26.625*analogRead(analogPin2)-607;
+    int r3 = analogRead(analogPin1);
+    MotorWriting(0, 0);
+    Serial3.print('|');
+    Serial3.print(l3);
+    Serial3.print('|');
+
+    Serial3.print(l2);
+    Serial3.print('|');
+
+    Serial3.print(m);
+    Serial3.print('|');
+
+    Serial3.print(r2);
+    Serial3.print('|');
+
+    Serial3.print(r3);
+    delay(2000);
+  }
+  if(cmd!='x'){
+    // control(Tracking(control('0'), (read)));
+    cmd = Tracking(cmd, (read));
+    }
+  else{
+    MotorWriting(0,0); 
+  }
   read();
 
   //   // 2. PC to Module: Read user input and truncate line endings
@@ -168,6 +203,7 @@ bool waitForResponse(const char *expected, unsigned long timeout) {
 
 void motorcontrol(int a) {}
 void PICC_DumpDetails(Print &output, MFRC522::Uid *uid);
+
 void read() {
   if (!mfrc522->PICC_IsNewCardPresent()) {
     return;

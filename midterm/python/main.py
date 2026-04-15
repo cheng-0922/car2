@@ -43,7 +43,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
     ### Bluetooth connection haven't been implemented yet, we will update ASAP ###
     # interface = BTInterface(port=bt_port)
     # TODO : Initialize necessary variables
-
+    
     if mode == "0":
         log.info("Mode 0: For treasure-hunting")
         # TODO : for treasure-hunting, which encourages you to hunt as many scores as possible
