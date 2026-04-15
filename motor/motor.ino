@@ -197,6 +197,82 @@ void Tracking() {
       // }
 }
 }
+
+void PIDTracking() {
+  int threshold=100;
+  int threshold_m=40;
+  bool l3 = analogRead(analogPin5)>=threshold;
+  bool l2 = analogRead(analogPin4)>=threshold;
+  bool m = analogRead(analogPin3)>=threshold_m;
+  bool r2 = analogRead(analogPin2)>=threshold;
+  bool r3 = analogRead(analogPin1)>=threshold;
+  static int count = 0;
+  double w[5]  = {0.4, 0.2 ,0, -0.2 , -0.5};
+  double error = (l3*w[0]+l2*w[1]+r2*w[3]+r3*w[4])/(l3 + l2 + m + r2 +r3);
+  int Kp = 100 ;
+  int powerCorrection =Kp * error; // ex. Kp = 100, 也與 w2 & w3 有關
+  int vR =178-powerCorrection; // ex. Tp = 150, 也與 w2 & w3 有關
+  int vL =200 +powerCorrection;
+  if(vR>255) vR = 255;
+  if(vL>255) vL = 255;
+  MotorWriting(vL, vR);
+  if((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)) {
+    switch(count) {
+      case 0: {
+        right(); count++;break;
+      }
+      case 1: {
+        back(); count++; break;
+      }
+      case 2: {
+        delay(500); count++; break;
+      }
+      case 3: {
+        back(); count++; break;
+      }
+      case 4:{
+        left(); count++; break;
+      }
+      case 5: {
+        back(); count=0; break;
+      }
+    }
+    
+      // // while((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)){
+      //     MotorWriting(90, 100);
+      //     delay(200);
+      // // }
+      // // if((l3 <threshold) && (l2 <threshold) && (m <threshold_m) && (r2 <threshold) && (r3 <threshold))
+      // // {
+        
+      //     MotorWriting(0, 0);
+      //     delay(1000);
+      //     MotorWriting(178, -200);
+      //     delay(700); 
+
+      //     while((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)) {
+      //       MotorWriting(178, 200); // GO straight
+      //        delay(20);
+      //        if ((l3 <threshold)&& (m >=threshold_m) && (r3 <threshold)) {
+      //         break;}
+
+      //     }
+      // }
+      // else
+      // {
+      //   MotorWriting(-178, 200); // right turn
+      //   delay(350); 
+      //   while((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)) {
+
+
+      //       MotorWriting(178, 200); // GO straight
+      //       delay(20);
+
+      //     }
+        
+      // }
+}
+}
   // else {
   // MotorWriting(-60, -60);
   // }
@@ -249,8 +325,4 @@ void Tracking() {
 
 //   // stop
 // 	digitalWrite(AIN1, LOW);
-// 	digitalWrite(AIN2, LOW);
-// 	digitalWrite(BIN1, LOW);
-// 	digitalWrite(BIN2, LOW);
-// 	delay(threshold0);
-// }
+/
