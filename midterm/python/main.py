@@ -109,7 +109,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         nodelist= maze.strategy_2(now_pos, fin)
         next_pos = nodelist[1]
         car_dir = now_pos.get_direction(next_pos)
-        cmd = maze.actions_to_str(maze.getAction(car_dir, now_pos, next_pos))
+        cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
         try:
             while True:
                 car_msg = bl.bridge.listen()
@@ -120,8 +120,9 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                     elif(car_msg=='n'):
                         now_pos=next_pos
                         nodelist= maze.strategy_2(now_pos, fin)
-                        next_pos = nodelist[1]
-                        cmd = maze.actions_to_str(maze.getAction(car_dir, now_pos, next_pos))
+                        if nodelist[1]: next_pos = nodelist[1]
+                        else : print("end")
+                        cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
 
                         bl.bridge.send(cmd)
                     elif(car_msg=='r'):
@@ -168,7 +169,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
             pass
     elif mode == 2:
         log.info("Mode 2: Self-testing mode.")
-        # TODO: You can write your code to test specific function.
+        # Text Debug, Use keyboard send car_msg
         
         fin = maze.get_node_dict()[12]
         now_pos= maze.get_start_point()
@@ -187,7 +188,8 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                     elif(car_msg=='n'):
                         now_pos=next_pos
                         nodelist= maze.strategy_2(now_pos, fin)
-                        next_pos = nodelist[1]
+                        if nodelist[1]: next_pos = nodelist[1]
+                        else : print("end")
                         cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
 
                         print(cmd)
