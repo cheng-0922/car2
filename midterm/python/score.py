@@ -84,7 +84,7 @@ class ScoreboardServer(Scoreboard):
     The Scoreboard class connects to the server socket and enables updating score by sending UID.
     """
 
-    def __init__(self, teamname: str, host=f"http://localhost:3000", debug=False):
+    def __init__(self, teamname: str, host=f"http://140.112.175.18:5000", debug=False):
         self.teamname = teamname
         self.ip = host
 
@@ -157,21 +157,21 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
 
     try:
-        scoreboard = ScoreboardServer("TeamName2", "http://140.112.175.18")
+        scoreboard = ScoreboardServer("WED2", "http://140.112.175.18")
         # scoreboard = ScoreboardFake("TeamName", "data/fakeUID.csv")
         time.sleep(1)
 
-        score, time_remaining = scoreboard.add_UID("10BA617E")
+        score, time_remaining = scoreboard.add_UID("AAAAAAAA")
         current_score = scoreboard.get_current_score()
         log.info(f"Current score: {current_score}")
         time.sleep(1)
 
-        score, time_remaining = scoreboard.add_UID("556D04D6")
+        score, time_remaining = scoreboard.add_UID("99999999")
         current_score = scoreboard.get_current_score()
         log.info(f"Current score: {current_score}")
         time.sleep(1)
 
-        score, time_remaining = scoreboard.add_UID("12345678")
+        score, time_remaining = scoreboard.add_UID("FFFFFFFF")
         current_score = scoreboard.get_current_score()
         log.info(f"Current score: {current_score}")
 

@@ -175,7 +175,8 @@ class Maze:
 
     def actions_to_str(self, actions):
         # cmds should be a string sequence like "fbrl....", use it as the input of BFS checklist #1
-        cmd = "fbrls"
+        # cmd = "fbrls"
+        cmd = "wsdax"
         cmds = ""
         for action in actions:
             cmds += cmd[action - 1]
@@ -188,10 +189,10 @@ class Maze:
     def strategy_2(self, node_from: Node, node_to: Node):
         return self.BFS_2(node_from, node_to)
 
-m = Maze('maze (1).csv')
+m = Maze("maze1.csv")
 nodelist = m.testBFS2(1,10)
 acts = m.getActions(nodelist)
 print(m.actions_to_str(acts))
-nodelist = m.testBFS(1)
-acts = m.getActions(nodelist)
-print(m.actions_to_str(acts))
+# nodelist = m.testBFS(1)
+# acts = m.getActions(nodelist)
+# print(m.actions_to_str(acts))
