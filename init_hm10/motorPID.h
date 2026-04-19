@@ -70,7 +70,31 @@ void back(void(*f)()){
 
   
 }
-void straight(){
+int straight(){
+  int threshold=80;
+  int threshold_m=40;
+
+  while(true){
+      int l3 = analogRead(analogPin5);
+      int l2 = analogRead(analogPin4);
+      int m = analogRead(analogPin3);
+      int r2 = 26.625*analogRead(analogPin2)-607;
+      int r3 = analogRead(analogPin1);
+      if(!((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)))
+        break;
+
+    }
+
+  delay(350);
+  while(true){
+      int l3 = analogRead(analogPin5);
+      int l2 = analogRead(analogPin4);
+      int m = analogRead(analogPin3);
+      int r2 = 26.625*analogRead(analogPin2)-607;
+      int r3 = analogRead(analogPin1);
+      if((l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold))
+        break;
+    }
   
 }
 void right(void(*f)()){
@@ -188,6 +212,10 @@ char Tracking(char cmd, void(*f)()) {
       if(cmd=='s') {
         // Serial3.print("right turn");
         back(f);
+        f();
+      }
+      if(cmd=='w'){
+        straight();
         f();
       }
       return 'q';

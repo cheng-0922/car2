@@ -189,8 +189,8 @@ class Maze:
     def strategy_2(self, node_from: Node, node_to: Node):
         return self.BFS_2(node_from, node_to)
 
-m = Maze("maze1.csv")
-nodelist = m.testBFS2(1,10)
+m = Maze("data/medium_maze.csv")
+nodelist = m.testBFS2(1,12)
 acts = m.getActions(nodelist)
 print(m.actions_to_str(acts))
 # nodelist = m.testBFS(1)

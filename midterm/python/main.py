@@ -45,20 +45,21 @@ def background_listener(bridge,point,maze):
         if car_msg:
             print(f"\r[HM10]: {car_msg}")
             print("You: ", end="", flush=True)
-            print(type(car_msg))
+            # print(type(car_msg))
             print(f"\r[HM10]: {car_msg}\n", end="")
-            if(len(car_msg)>2):
+            if(len(car_msg)==8):
                 point.add_UID(car_msg)
             elif(car_msg=='n'):
                 now_pos=next_pos
                 nodelist= maze.strategy_2(now_pos, fin)
-                if nodelist[1]: next_pos = nodelist[1]
+                if len(nodelist)>1: next_pos = nodelist[1]
                 else : print("end")
                 cmds = "wsdax"
                 cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
 
                 bridge.send(cmd)
-            elif(car_msg=='r'):
+            elif(car_msg=='a'):
+                print(car_dir)
                 match car_dir:
                     case 1:
                         car_dir = 4
@@ -70,7 +71,9 @@ def background_listener(bridge,point,maze):
                         car_dir = 2
                     case _:
                         pass
-            elif(car_msg=='l'):
+                print(car_dir)
+            elif(car_msg=='d'):
+                print(car_dir)
                 match car_dir:
                     case 1:
                         car_dir = 3
@@ -82,6 +85,7 @@ def background_listener(bridge,point,maze):
                         car_dir = 1
                     case _:
                         pass
+                print(car_dir)
             elif(car_msg=='s'):
                 match car_dir:
                     case 1:
