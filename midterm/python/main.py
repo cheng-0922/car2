@@ -32,7 +32,6 @@ PORT = 'COM7'
 EXPECTED_NAME = 'HM10_Car2'
 
 def background_listener(bridge,point,maze):
-    start = maze.get_start_point()
     fin = maze.get_node_dict()[12]
     now_pos= maze.get_start_point()
     nodelist= maze.strategy_2(now_pos, fin)
@@ -254,12 +253,12 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                     elif(car_msg=='n'):
                         now_pos=next_pos
                         nodelist= maze.strategy_2(now_pos, fin)
-                        if nodelist[1]: next_pos = nodelist[1]
+                        if len(nodelist)>1: next_pos = nodelist[1]
                         else : print("end")
                         cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
 
                         print(cmd)
-                    elif(car_msg=='r'):
+                    elif(car_msg=='d'):
                         match car_dir:
                             case 1:
                                 car_dir = 4
@@ -271,7 +270,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                                 car_dir = 2
                             case _:
                                 pass
-                    elif(car_msg=='l'):
+                    elif(car_msg=='a'):
                         match car_dir:
                             case 1:
                                 car_dir = 3
@@ -311,4 +310,4 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
 #     args = parse_args()
 #     main(**vars(args))
 
-main(1,'COM7', 'WED2', SERVER_URL,MAZE_FILE)
+main(2,'COM7', 'WED2', SERVER_URL,MAZE_FILE)
