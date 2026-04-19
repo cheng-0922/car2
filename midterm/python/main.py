@@ -31,40 +31,100 @@ BT_PORT = ""
 PORT = 'COM7'
 EXPECTED_NAME = 'HM10_Car2'
 
-def background_listener(bridge):
+def background_listener(bridge,point,maze):
+    start = maze.get_start_point()
+    fin = maze.get_node_dict()[12]
+    now_pos= maze.get_start_point()
+    nodelist= maze.strategy_2(now_pos, fin)
+    next_pos = nodelist[1]
+    car_dir = now_pos.get_direction(next_pos)
+    cmds = "wsdax"
+    cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
     while True:
-        msg = bridge.listen()
-        if msg:
-            print(f"\r[HM10]: {msg}")
+        car_msg = bridge.listen()
+        if car_msg:
+            print(f"\r[HM10]: {car_msg}")
             print("You: ", end="", flush=True)
+            print(type(car_msg))
+            print(f"\r[HM10]: {car_msg}\n", end="")
+            if(len(car_msg)>2):
+                point.add_UID(car_msg)
+            elif(car_msg=='n'):
+                now_pos=next_pos
+                nodelist= maze.strategy_2(now_pos, fin)
+                if nodelist[1]: next_pos = nodelist[1]
+                else : print("end")
+                cmds = "wsdax"
+                cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
+
+                bridge.send(cmd)
+            elif(car_msg=='r'):
+                match car_dir:
+                    case 1:
+                        car_dir = 4
+                    case 2:
+                        car_dir = 3
+                    case 3:
+                        car_dir = 1
+                    case 4:
+                        car_dir = 2
+                    case _:
+                        pass
+            elif(car_msg=='l'):
+                match car_dir:
+                    case 1:
+                        car_dir = 3
+                    case 2:
+                        car_dir = 4
+                    case 3:
+                        car_dir = 2
+                    case 4:
+                        car_dir = 1
+                    case _:
+                        pass
+            elif(car_msg=='s'):
+                match car_dir:
+                    case 1:
+                        car_dir = 2
+                    case 2:
+                        car_dir = 1
+                    case 3:
+                        car_dir = 4
+                    case 4:
+                        car_dir = 3
+                    case _:
+                        pass
         time.sleep(0.1)
 class Bluetooth:     
     def __init__(self):
         self.bridge = HM10ESP32Bridge(port=PORT)
         
         # 1. Configuration Check
-        current_name = bridge.get_hm10_name()
+        current_name = self.bridge.get_hm10_name()
         if current_name != EXPECTED_NAME:
             print(f"Target mismatch. Current: {current_name}, Expected: {EXPECTED_NAME}")
             print(f"Updating target name to {EXPECTED_NAME}...")
             
-            if bridge.set_hm10_name(EXPECTED_NAME):
+            while not self.bridge.set_hm10_name(EXPECTED_NAME):
+                print("❌ Failed to set name. Exiting.")
+            
+
+            if self.bridge.set_hm10_name(EXPECTED_NAME):
                 print("✅ Name updated successfully. Resetting ESP32...")
-                bridge.reset()
+                self.bridge.reset()
                 # Re-init after reset
-                bridge = HM10ESP32Bridge(port=PORT)
+                self.bridge = HM10ESP32Bridge(port=PORT)
             else:
                 print("❌ Failed to set name. Exiting.")
-                sys.exit(1)
-
+                
         # 2. Connection Check
-        status = bridge.get_status()
+        status = self.bridge.get_status()
         if status != "CONNECTED":
             print(f"⚠️ ESP32 is {status}. Please ensure HM-10 is advertising. Exiting.")
             sys.exit(0)
 
         print(f"✨ Ready! Connected to {EXPECTED_NAME}")
-        threading.Thread(target=background_listener, args=(bridge,), daemon=True).start()
+        
 
         
     
@@ -99,23 +159,25 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         bl = Bluetooth()
         
 
-    elif mode == "1":
+    elif mode == 1:
         log.info("Mode 1: Self-testing mode.")
         # TODO: You can write your code to test specific function.
         bl = Bluetooth()
         start = maze.get_start_point()
-        fin = maze.get_node_dict(12)
+        fin = maze.get_node_dict()[12]
         now_pos= maze.get_start_point()
         nodelist= maze.strategy_2(now_pos, fin)
         next_pos = nodelist[1]
         car_dir = now_pos.get_direction(next_pos)
+        cmds = "wsdax"
         cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
+        threading.Thread(target=background_listener, args=(bl.bridge,point,maze), daemon=True).start()
         try:
             while True:
                 car_msg = bl.bridge.listen()
                 if car_msg:
                     print(f"\r[HM10]: {car_msg}\n", end="")
-                    if(car_msg.len()>2):
+                    if(len(car_msg)>2):
                         point.add_UID(car_msg)
                     elif(car_msg=='n'):
                         now_pos=next_pos
@@ -245,4 +307,4 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
 #     args = parse_args()
 #     main(**vars(args))
 
-main(2,'COM7', 'WED2', SERVER_URL,'maze1.csv')
+main(1,'COM7', 'WED2', SERVER_URL,MAZE_FILE)

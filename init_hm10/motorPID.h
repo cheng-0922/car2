@@ -175,7 +175,7 @@ char Tracking(char cmd, void(*f)()) {
   
   static int count=0;
   if((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)) {
-    // Serial3.print("Entering node");
+    Serial3.print('n');
     if(cmd!='q'){
       if(cmd=='a') {
         // Serial3.print("left turn");
