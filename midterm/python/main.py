@@ -301,6 +301,74 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         except (KeyboardInterrupt, EOFError):
             pass
 
+    elif mode == 3:
+        log.info("Mode 3: Self-testing mode.")
+        # Text Debug, Use keyboard send car_msg
+        
+        fin = maze.get_node_dict()[12]
+        now_pos= maze.get_start_point()
+        nodelist= maze.strategy(now_pos)
+        next_pos = nodelist[1]
+        car_dir = now_pos.get_direction(next_pos)
+        cmds = "wsdax"
+        cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
+        try:
+            while True:
+                car_msg = input('car_msg?')
+                if car_msg:
+                    print(f"\r[HM10]: {car_msg}\n", end="")
+                    if(len(car_msg)>2):
+                        point.add_UID(car_msg)
+                    elif(car_msg=='n'):
+                        now_pos=next_pos
+                        nodelist.remove()
+                        if len(nodelist)>1: next_pos = nodelist[1]
+                        else : print("end")
+                        cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
+
+                        print(cmd)
+                    elif(car_msg=='d'):
+                        match car_dir:
+                            case 1:
+                                car_dir = 4
+                            case 2:
+                                car_dir = 3
+                            case 3:
+                                car_dir = 1
+                            case 4:
+                                car_dir = 2
+                            case _:
+                                pass
+                    elif(car_msg=='a'):
+                        match car_dir:
+                            case 1:
+                                car_dir = 3
+                            case 2:
+                                car_dir = 4
+                            case 3:
+                                car_dir = 2
+                            case 4:
+                                car_dir = 1
+                            case _:
+                                pass
+                    elif(car_msg=='s'):
+                        match car_dir:
+                            case 1:
+                                car_dir = 2
+                            case 2:
+                                car_dir = 1
+                            case 3:
+                                car_dir = 4
+                            case 4:
+                                car_dir = 3
+                            case _:
+                                pass
+                else:   
+                    user_msg = input("You: ")
+                    if user_msg.lower() in ['exit', 'quit']: break
+                    if user_msg: bl.bridge.send(user_msg)
+        except (KeyboardInterrupt, EOFError):
+            pass
     else:
         log.error("Invalid mode")
         sys.exit(1)
@@ -310,4 +378,4 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
 #     args = parse_args()
 #     main(**vars(args))
 
-main(2,'COM7', 'WED2', SERVER_URL,MAZE_FILE)
+main(3,'COM7', 'WED2', SERVER_URL,MAZE_FILE)

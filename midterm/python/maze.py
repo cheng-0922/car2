@@ -185,18 +185,74 @@ class Maze:
 
     def strategy(self, node: Node):
         result = []
-        for dict in self.nodes[::-1]:
-            if dict not in result:
-                result.append(self.BFS_2(node,dict))
-        return self.BFS(node)
+        start = node
+        for dist in self.nodes[::-1]:
+            if (not dist in result )and len(dist.get_successors())==1:
+                result.extend(self.BFS_2(start,dist)[1:])
+                # new_list = self.BFS_2(start,dist)
+                # if new_list: result.append(self.BFS_2(start,dist))
+                start = dist
+        return result
 
     def strategy_2(self, node_from: Node, node_to: Node):
         return self.BFS_2(node_from, node_to)
+    
+    def point(self, start: Node, node: Node):
+        nodelist = self.BFS_2(start, node)
+        ns = 0
+        ew = 0
+        node_prev = nodelist[0]
+        for node in nodelist:
+            i = node.get_direction(node_prev)
+            match(i):
+                case 1 : ns+=1
+                case 2 : ns-=1
+                case 3 : ew+=1
+                case 4 : ew-=1
+                case _ : pass
+            node_prev = node
+        return abs(ns)+abs(ew)
+        
 
-m = Maze("data/medium_maze.csv")
+
+
+
+
+m = Maze("data/big_maze_114.csv")
 # nodelist = m.testBFS2(1,12)
+nodelist=m.strategy(m.nodes[24])
 acts = m.getActions(nodelist)
-print(m.actions_to_str(acts))
+
+# print(f'route:{m.actions_to_str(acts)}')
+# for node in nodelist:
+#     print(node.get_index())
+
+nodelist=m.BFS(m.nodes[25])
+acts = m.getActions(nodelist)
+point_dict = dict()
+route_dict = dict()
+avg_dict = dict()
+for dist in m.nodes:
+    if dist.get_index() == 25: continue
+    if len(dist.get_successors())==1 :
+        nl = m.BFS_2(m.nodes[24], dist)
+        route_dict[int(dist.get_index())]= len(nl)-1
+        point_dict[int(dist.get_index())]= m.point(m.nodes[24],dist)
+        avg_dict [int(dist.get_index())]=  (m.point(m.nodes[24],dist)) /(len(nl)-1) 
+
+
+print(point_dict)
+print(route_dict)
+print(avg_dict)
+
+
+    
+# print(f'route:{m.actions_to_str(acts)}')
+# for node in nodelist:
+#     print(node.get_index())
+# for nodelist in m.strategy(m.nodes[0]):
+#     acts = m.getActions(nodelist)
+#     print(f'route:{m.actions_to_str(acts)}')
 # nodelist = m.testBFS(1)
 # acts = m.getActions(nodelist)
 # print(m.actions_to_str(acts))
