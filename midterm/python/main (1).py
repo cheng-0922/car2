@@ -28,7 +28,7 @@ MAZE_FILE = "data/medium_maze.csv"
 BT_PORT = ""
 
 
-PORT = 'COM7'
+PORT = 'COM6'
 EXPECTED_NAME = 'HM10_Car2'
 
 def background_listener(bridge,point,maze):
@@ -60,18 +60,21 @@ def background_listener(bridge,point,maze):
         car_msg = bridge.listen()
         if car_msg:
             print(f"\r[HM10]: {car_msg}\n", end="")
-            
-            if (car_msg=='b') :
-                now_pos=next_pos
-                if len(nodelist)>1: next_pos= nodelist.pop()
-                else : bridge.send('w')
-                cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
+            stop = False
+            # if (car_msg=='b') :
+            #     now_pos=next_pos
+            #     if len(nodelist)>0: next_pos= nodelist.pop()
+            #     else : bridge.send('w')
+            #     cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
 
-                bridge.send(cmd)
-            elif(car_msg=='n'):
+                # bridge.send(cmd)
+            if(car_msg=='n'):
                 now_pos=next_pos
-                if len(nodelist)>1: next_pos= nodelist.pop()
-                else : bridge.send('x')
+                if len(nodelist)>0: next_pos= nodelist.pop()
+                else : 
+                    if(stop) :bridge.send('x')
+                    stop = True
+                    
                 cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
 
                 bridge.send(cmd)
@@ -288,4 +291,4 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
 #     args = parse_args()
 #     main(**vars(args))
 
-main(1,'COM7', 'WED2', SERVER_URL,MAZE_FILE)
+main(1,'COM6', 'WED2', SERVER_URL,MAZE_FILE)
