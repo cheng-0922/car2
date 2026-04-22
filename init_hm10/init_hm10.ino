@@ -227,9 +227,9 @@ void PICC_DumpDetails(Print &output, MFRC522::Uid *uid  ///< Pointer to Uid stru
   // output.print(F("Card UID:"));
   for (byte i = 0; i < uid->size; i++) {
     if (uid->uidByte[i] < 0x10)
-      output.print(F(" 0"));
+      output.print(F("0"));
     else
-      output.print(F(" "));
+      output.print(F(""));
     output.print(uid->uidByte[i], HEX);
   }
   output.println();
