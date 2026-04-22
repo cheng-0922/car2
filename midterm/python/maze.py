@@ -188,12 +188,14 @@ class Maze:
         start = node
         # result.extend(self.BFS_2(start,self.node_dict[7])[1:])
         # start=self.node_dict[7]
-        for dist in self.nodes[::-1]:
-            if (not dist in result )and len(dist.get_successors())==1:
+        list_treasure = [nodes for nodes in self.nodes if len(nodes.get_successors())==1 and (not dist in result )]
+        for dist in list_treasure[::-1]:
+            if (not dist in result )and len(dist.get_successors())==1 and self.point(start, dist) < 5:
                 result.extend(self.BFS_2(start,dist)[1:])
                 # new_list = self.BFS_2(start,dist)
                 # if new_list: result.append(self.BFS_2(start,dist))
                 start = dist
+                list_treasure.pop()
         return result
 
     def strategy_2(self, node_from: Node, node_to: Node):
@@ -229,7 +231,7 @@ acts = m.getActions(nodelist)
 # for node in nodelist:
 #     print(node.get_index())
 
-nodelist=m.strategy(m.nodes[25])
+nodelist=m.strategy(m.node_dict[25])
 
 acts = m.getActions(nodelist)
 point_dict = dict()
