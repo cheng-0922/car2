@@ -28,7 +28,7 @@ MAZE_FILE = "data/medium_maze.csv"
 BT_PORT = ""
 
 
-PORT = 'COM7'
+PORT = 'COM6'
 EXPECTED_NAME = 'HM10_Car2'
 
 def background_listener(bridge,point,maze):
@@ -190,7 +190,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                         cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
 
                         bl.bridge.send(cmd)
-                    elif(car_msg=='r'):
+                    elif(car_msg=='d'):
                         match car_dir:
                             case 1:
                                 car_dir = 4
@@ -202,7 +202,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                                 car_dir = 2
                             case _:
                                 pass
-                    elif(car_msg=='l'):
+                    elif(car_msg=='a'):
                         match car_dir:
                             case 1:
                                 car_dir = 3
@@ -247,30 +247,37 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
             while True:
                 car_msg = input('car_msg?')
                 if car_msg:
+                    print(f"\r[HM10]: {car_msg}")
+                    print("You: ", end="", flush=True)
+                    # print(type(car_msg))
                     print(f"\r[HM10]: {car_msg}\n", end="")
-                    if(len(car_msg)>2):
+                    if(len(car_msg)==8):
                         point.add_UID(car_msg)
                     elif(car_msg=='n'):
                         now_pos=next_pos
                         nodelist= maze.strategy_2(now_pos, fin)
                         if len(nodelist)>1: next_pos = nodelist[1]
                         else : print("end")
+                        cmds = "wsdax"
                         cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
 
                         print(cmd)
-                    elif(car_msg=='d'):
-                        match car_dir:
-                            case 1:
-                                car_dir = 4
-                            case 2:
-                                car_dir = 3
-                            case 3:
-                                car_dir = 1
-                            case 4:
-                                car_dir = 2
-                            case _:
-                                pass
                     elif(car_msg=='a'):
+                        print(car_dir)
+                        match car_dir:
+                            case 1:
+                                car_dir = 4
+                            case 2:
+                                car_dir = 3
+                            case 3:
+                                car_dir = 1
+                            case 4:
+                                car_dir = 2
+                            case _:
+                                pass
+                        print(car_dir)
+                    elif(car_msg=='d'):
+                        print(car_dir)
                         match car_dir:
                             case 1:
                                 car_dir = 3
@@ -282,6 +289,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                                 car_dir = 1
                             case _:
                                 pass
+                        print(car_dir)
                     elif(car_msg=='s'):
                         match car_dir:
                             case 1:
@@ -311,7 +319,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         next_pos = nodelist[1]
         car_dir = now_pos.get_direction(next_pos)
         cmds = "wsdax"
-        cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
+        cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)-1]
         try:
             while True:
                 car_msg = input('car_msg?')
@@ -324,7 +332,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                         nodelist.remove()
                         if len(nodelist)>1: next_pos = nodelist[1]
                         else : print("end")
-                        cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
+                        cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)-1]
 
                         print(cmd)
                     elif(car_msg=='d'):
@@ -378,4 +386,4 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
 #     args = parse_args()
 #     main(**vars(args))
 
-main(3,'COM7', 'WED2', SERVER_URL,MAZE_FILE)
+main(2,'COM6', 'WED2', SERVER_URL,MAZE_FILE)
