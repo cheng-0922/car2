@@ -184,7 +184,7 @@ class Maze:
         return cmds
 
     def strategy(self, node: Node):
-        result = []
+        result = [node]
         start = node
         for dist in self.nodes[::-1]:
             if (not dist in result )and len(dist.get_successors())==1:
@@ -227,7 +227,8 @@ acts = m.getActions(nodelist)
 # for node in nodelist:
 #     print(node.get_index())
 
-nodelist=m.BFS(m.nodes[25])
+nodelist=m.strategy(m.nodes[25])
+
 acts = m.getActions(nodelist)
 point_dict = dict()
 route_dict = dict()
@@ -244,7 +245,9 @@ for dist in m.nodes:
 print(point_dict)
 print(route_dict)
 print(avg_dict)
-
+for node in nodelist[::1]:
+    print(int(node.get_index()))
+    nodelist.pop()
 
     
 # print(f'route:{m.actions_to_str(acts)}')
