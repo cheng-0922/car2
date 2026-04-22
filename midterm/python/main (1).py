@@ -28,9 +28,10 @@ MAZE_FILE = "data/medium_maze.csv"
 BT_PORT = ""
 
 
-PORT = 'COM3'
+PORT = 'COM6'
 EXPECTED_NAME = 'HM10_Car2'
-
+start=time.time()
+end=time.time()
 def background_listener(bridge,point,maze):
     fin = maze.get_node_dict()[12]
     now_pos= maze.get_start_point()
@@ -46,6 +47,7 @@ def background_listener(bridge,point,maze):
             if(len(car_msg)==8):
                 point.add_UID(car_msg)
             elif(car_msg=='n'):
+                start = time.time()
                 now_pos=next_pos
                 nodelist= maze.strategy_2(now_pos, fin)
                 if len(nodelist)>1: next_pos = nodelist[1]
@@ -53,7 +55,12 @@ def background_listener(bridge,point,maze):
                 cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
 
                 bridge.send(cmd)
+            elif(car_msg=='w'):
+                end = time.time()
+                print(f"Time: {end-start}")
             elif(car_msg=='d'):
+                end = time.time()
+                print(f"Time: {end-start}")
                 match car_dir:
                     case 1:
                         car_dir = 4
@@ -66,6 +73,8 @@ def background_listener(bridge,point,maze):
                     case _:
                         pass
             elif(car_msg=='a'):
+                end = time.time()
+                print(f"Time: {end-start}")
                 match car_dir:
                     case 1:
                         car_dir = 3
@@ -78,6 +87,8 @@ def background_listener(bridge,point,maze):
                     case _:
                         pass
             elif(car_msg=='s'):
+                end = time.time()
+                print(f"Time: {end-start}")
                 match car_dir:
                     case 1:
                         car_dir = 2
@@ -182,7 +193,8 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                         cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
 
                         bl.bridge.send(cmd)
-                    elif(car_msg=='r'):
+                        
+                    elif(car_msg=='d'):                        
                         match car_dir:
                             case 1:
                                 car_dir = 4
@@ -194,7 +206,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                                 car_dir = 2
                             case _:
                                 pass
-                    elif(car_msg=='l'):
+                    elif(car_msg=='a'):
                         match car_dir:
                             case 1:
                                 car_dir = 3
@@ -302,4 +314,4 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
 #     args = parse_args()
 #     main(**vars(args))
 
-main(1,'COM3', 'WED2', SERVER_URL,MAZE_FILE)
+main(1,'COM6', 'WED2', SERVER_URL,MAZE_FILE)
