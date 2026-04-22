@@ -28,7 +28,7 @@ MAZE_FILE = "data/medium_maze.csv"
 BT_PORT = ""
 
 
-PORT = 'COM3'
+PORT = 'COM7'
 EXPECTED_NAME = 'HM10_Car2'
 
 def background_listener(bridge,point,maze):
@@ -40,30 +40,38 @@ def background_listener(bridge,point,maze):
     # cmds = "wsdax"
     # cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
     bridge.send('x') #stop initially
-    time.sleep(1)
+    time.sleep(2)
     print('wait 1 second, please put it to start')
     now_pos = maze.get_start_point()
     nodelist = maze.strategy(now_pos)[::-1]
     nodelist.pop()
     next_pos = nodelist.pop()
     car_dir = now_pos.get_direction(next_pos)
+    bridge.send('b')
+    time.sleep(0.5)
+    cmds = "wsdax"
 
     # the command when entering second
     now_pos= next_pos
     next_pos= nodelist.pop()
-    cmds = "wsdax"
     cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
     bridge.send(cmd)
     while True:
         car_msg = bridge.listen()
         if car_msg:
             print(f"\r[HM10]: {car_msg}\n", end="")
-            if(len(car_msg)==8):
-                point.add_UID(car_msg)
-            elif(car_msg=='n'):
+            
+            if (car_msg=='b') :
                 now_pos=next_pos
                 if len(nodelist)>1: next_pos= nodelist.pop()
                 else : bridge.send('w')
+                cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
+
+                bridge.send(cmd)
+            elif(car_msg=='n'):
+                now_pos=next_pos
+                if len(nodelist)>1: next_pos= nodelist.pop()
+                else : bridge.send('x')
                 cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
 
                 bridge.send(cmd)
@@ -103,6 +111,8 @@ def background_listener(bridge,point,maze):
                         car_dir = 3
                     case _:
                         pass
+            if(len(car_msg)==8):
+                point.add_UID(car_msg)
         time.sleep(0.1)
 class Bluetooth:     
     def __init__(self):
@@ -173,14 +183,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         bl = Bluetooth()
         maze = Maze(maze_file)
         point = ScoreboardServer(team_name, server_url)
-        start = maze.get_start_point()
-        fin = maze.get_node_dict()[12]
-        now_pos= maze.get_start_point()
-        nodelist= maze.strategy_2(now_pos, fin)
-        next_pos = nodelist[1]
-        car_dir = now_pos.get_direction(next_pos)
-        cmds = "wsdax"
-        cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
+        
         threading.Thread(target=background_listener, args=(bl.bridge,point,maze), daemon=True).start()
         try:
             while True:
@@ -285,4 +288,4 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
 #     args = parse_args()
 #     main(**vars(args))
 
-main(2,'COM3', 'WED2', SERVER_URL,MAZE_FILE)
+main(1,'COM7', 'WED2', SERVER_URL,MAZE_FILE)
