@@ -115,7 +115,10 @@ void loop() {
     // control(Serial3.read());
     // Serial3.print(control('0'));
     cmd = Serial3.read();
+    if (cmd!='b') {
     Serial3.print(cmd);
+      
+    }
   }
   if(cmd=='r'){
     MotorWriting(0,0);
@@ -125,7 +128,7 @@ void loop() {
     int l3 = analogRead(analogPin5);
     int l2 = analogRead(analogPin4);
     int m = analogRead(analogPin3);
-    int r2 = 26.625*analogRead(analogPin2)-607;
+    int r2 = analogRead(analogPin2);
     int r3 = analogRead(analogPin1);
     MotorWriting(0, 0);
     Serial3.print('|');
@@ -147,11 +150,13 @@ void loop() {
   if(cmd!='x'){
     // control(Tracking(control('0'), (read)));
     cmd = Tracking(cmd, (read));
+    if(cmd=='s') read();
+
     }
   else{
     MotorWriting(0,0); 
   }
-  read();
+
 
   //   // 2. PC to Module: Read user input and truncate line endings
   //   if (Serial.available()) {

@@ -9,7 +9,7 @@ int BIN2 = 9;
 int PWMB = 11;
 //IR
 #define analogPin1 A3
-#define analogPin2 A4
+#define analogPin2 A15
 #define analogPin3 A5
 #define analogPin4 A6
 #define analogPin5 A7
@@ -43,54 +43,52 @@ void MotorWriting(double vL, double vR) {
   analogWrite(PWMB, vR);
 }
 void back(void(*f)()){
-      int threshold=100;
-  int threshold_m=40;
+  int threshold=120;
+  int threshold_m=100;
   int l3 = analogRead(analogPin5);
   int l2 = analogRead(analogPin4);
   int m = analogRead(analogPin3);
-  int r2 = 26.625*analogRead(analogPin2)-607;
+  int r2 = analogRead(analogPin2);
   int r3 = analogRead(analogPin1);
 
-  MotorWriting(220, -250);
-  delay(300);
+  MotorWriting(200, -200);
+  delay(400);
   f();
   while(true){
-      f();
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
       int m = analogRead(analogPin3);
-      int r2 = 26.625*analogRead(analogPin2)-607;
+      int r2 = analogRead(analogPin2);
       int r3 = analogRead(analogPin1);
-      if((l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold))
+      if((l3>= threshold) || (l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold || (r3 >= threshold)))
         break;
-      MotorWriting(178, -200);
-      f();
+      MotorWriting(150, -150);
       delay(1);
   }
 
   
 }
 int straight(){
-  int threshold=80;
+  int threshold=100;
   int threshold_m=40;
 
   while(true){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
       int m = analogRead(analogPin3);
-      int r2 = 26.625*analogRead(analogPin2)-607;
+      int r2 = analogRead(analogPin2);
       int r3 = analogRead(analogPin1);
       if(!((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)))
         break;
 
     }
 
-  delay(350);
+  delay(2);
   while(true){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
       int m = analogRead(analogPin3);
-      int r2 = 26.625*analogRead(analogPin2)-607;
+      int r2 = analogRead(analogPin2);
       int r3 = analogRead(analogPin1);
       if((l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold))
         break;
@@ -105,7 +103,7 @@ void right(void(*f)()){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
       int m = analogRead(analogPin3);
-      int r2 = 26.625*analogRead(analogPin2)-607;
+      int r2 = analogRead(analogPin2);
       int r3 = analogRead(analogPin1);
       if(!((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)))
         break;
@@ -117,7 +115,7 @@ void right(void(*f)()){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
       int m = analogRead(analogPin3);
-      int r2 = 26.625*analogRead(analogPin2)-607;
+      int r2 = analogRead(analogPin2);
       int r3 = analogRead(analogPin1);
       if((l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold))
         break;
@@ -134,7 +132,7 @@ void left(void(*f)()){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
       int m = analogRead(analogPin3);
-      int r2 = 26.625*analogRead(analogPin2)-607;
+      int r2 = analogRead(analogPin2);
       int r3 = analogRead(analogPin1);
       
       if(!((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)))
@@ -148,7 +146,7 @@ void left(void(*f)()){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
       int m = analogRead(analogPin3);
-      int r2 = 26.625*analogRead(analogPin2)-607;
+      int r2 = analogRead(analogPin2);
       int r3 = analogRead(analogPin1);
       f();
       if((l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold))
@@ -163,16 +161,16 @@ char Tracking(char cmd, void(*f)()) {
   int l3 = analogRead(analogPin5);
   int l2 = analogRead(analogPin4);
   int m = analogRead(analogPin3);
-  int r2 = 26.625*analogRead(analogPin2)-607;
+  int r2 = analogRead(analogPin2);
   int r3 = analogRead(analogPin1);
-  double w1= 5;
+  double w1= 4;
   double w2= 1;
   double w3= 1;
   double w4= 4;
   double Kp= 100;
 
-  // static double stady[2] = {250,220};
-  static double stady[2] = {200,178};
+  static double stady[2] = {250,250};
+  // static double stady[2] = {200,178};
 
   double Tpr=stady[0];
   double Tpl=stady[1];
@@ -199,8 +197,9 @@ char Tracking(char cmd, void(*f)()) {
   
   static int count=0;
   if((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)) {
-    Serial3.print('n');
+    
     if(cmd!='q'){
+      Serial3.print('n');
       if(cmd=='a') {
         // Serial3.print("left turn");
         left(f);
@@ -216,7 +215,6 @@ char Tracking(char cmd, void(*f)()) {
       }
       if(cmd=='w'){
         straight();
-        f();
       }
       return 'q';
     }
