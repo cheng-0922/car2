@@ -39,7 +39,7 @@ def background_listener(bridge,point,maze):
     # car_dir = now_pos.get_direction(next_pos)
     # cmds = "wsdax"
     # cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
-    bridge.send('x')
+    bridge.send('x') #stop initially
     time.sleep(1)
     print('wait 1 second, please put it to start')
     now_pos = maze.get_start_point()
@@ -47,9 +47,13 @@ def background_listener(bridge,point,maze):
     nodelist.pop()
     next_pos = nodelist.pop()
     car_dir = now_pos.get_direction(next_pos)
+
     # the command when entering second
     now_pos= next_pos
     next_pos= nodelist.pop()
+    cmds = "wsdax"
+    cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
+    bridge.send(cmd)
     while True:
         car_msg = bridge.listen()
         if car_msg:
@@ -58,9 +62,8 @@ def background_listener(bridge,point,maze):
                 point.add_UID(car_msg)
             elif(car_msg=='n'):
                 now_pos=next_pos
-                nodelist= maze.strategy_2(now_pos, fin)
-                if len(nodelist)>1: next_pos = nodelist[1]
-                else : print("end")
+                if len(nodelist)>1: next_pos= nodelist.pop()
+                else : bridge.send('w')
                 cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
 
                 bridge.send(cmd)
