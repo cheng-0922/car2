@@ -32,13 +32,24 @@ PORT = 'COM3'
 EXPECTED_NAME = 'HM10_Car2'
 
 def background_listener(bridge,point,maze):
-    fin = maze.get_node_dict()[12]
-    now_pos= maze.get_start_point()
-    nodelist= maze.strategy_2(now_pos, fin)
-    next_pos = nodelist[1]
+    # fin = maze.get_node_dict()[12]
+    # now_pos= maze.get_start_point()
+    # nodelist= maze.strategy_2(now_pos, fin)
+    # next_pos = nodelist[1]
+    # car_dir = now_pos.get_direction(next_pos)
+    # cmds = "wsdax"
+    # cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
+    bridge.send('x')
+    time.sleep(1)
+    print('wait 1 second, please put it to start')
+    now_pos = maze.get_start_point()
+    nodelist = maze.strategy(now_pos)[::-1]
+    nodelist.pop()
+    next_pos = nodelist.pop()
     car_dir = now_pos.get_direction(next_pos)
-    cmds = "wsdax"
-    cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
+    # the command when entering second
+    now_pos= next_pos
+    next_pos= nodelist.pop()
     while True:
         car_msg = bridge.listen()
         if car_msg:
@@ -140,8 +151,7 @@ def parse_args():
 
 
 def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: str):
-    maze = Maze(maze_file)
-    point = ScoreboardServer(team_name, server_url)
+    
     # point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
 
     ### Bluetooth connection haven't been implemented yet, we will update ASAP ###
@@ -158,6 +168,8 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         log.info("Mode 1: Self-testing mode.")
         # TODO: You can write your code to test specific function.
         bl = Bluetooth()
+        maze = Maze(maze_file)
+        point = ScoreboardServer(team_name, server_url)
         start = maze.get_start_point()
         fin = maze.get_node_dict()[12]
         now_pos= maze.get_start_point()
@@ -169,72 +181,40 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         threading.Thread(target=background_listener, args=(bl.bridge,point,maze), daemon=True).start()
         try:
             while True:
-                car_msg = bl.bridge.listen()
-                if car_msg:
-                    print(f"\r[HM10]: {car_msg}\n", end="")
-                    if(len(car_msg)>2):
-                        point.add_UID(car_msg)
-                    elif(car_msg=='n'):
-                        now_pos=next_pos
-                        nodelist= maze.strategy_2(now_pos, fin)
-                        if nodelist[1]: next_pos = nodelist[1]
-                        else : print("end")
-                        cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
-
-                        bl.bridge.send(cmd)
-                    elif(car_msg=='r'):
-                        match car_dir:
-                            case 1:
-                                car_dir = 4
-                            case 2:
-                                car_dir = 3
-                            case 3:
-                                car_dir = 1
-                            case 4:
-                                car_dir = 2
-                            case _:
-                                pass
-                    elif(car_msg=='l'):
-                        match car_dir:
-                            case 1:
-                                car_dir = 3
-                            case 2:
-                                car_dir = 4
-                            case 3:
-                                car_dir = 2
-                            case 4:
-                                car_dir = 1
-                            case _:
-                                pass
-                    elif(car_msg=='s'):
-                        match car_dir:
-                            case 1:
-                                car_dir = 2
-                            case 2:
-                                car_dir = 1
-                            case 3:
-                                car_dir = 4
-                            case 4:
-                                car_dir = 3
-                            case _:
-                                pass
-                else:   
-                    user_msg = input("You: ")
-                    if user_msg.lower() in ['exit', 'quit']: break
-                    if user_msg: bl.bridge.send(user_msg)
+                user_msg = input("You: ")
+                if user_msg.lower() in ['exit', 'quit']: break
+                if user_msg: bl.bridge.send(user_msg)
         except (KeyboardInterrupt, EOFError):
             pass
     elif mode == 2:
         log.info("Mode 2: Self-testing mode.")
         # Text Debug, Use keyboard send car_msg
-        
-        fin = maze.get_node_dict()[12]
-        now_pos= maze.get_start_point()
-        nodelist= maze.strategy_2(now_pos, fin)
-        next_pos = nodelist[1]
+        maze = Maze(maze_file)
+        point = ScoreboardServer(team_name, server_url)
+        # fin = maze.get_node_dict()[12]
+        # now_pos= maze.get_start_point()
+        # nodelist= maze.strategy_2(now_pos, fin)
+        # next_pos = nodelist[1]
+        # car_dir = now_pos.get_direction(next_pos)
+        # cmds = "wsdax"
+        # cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
+        print('x')
+        time.sleep(1)
+        print('wait 1 second, please put it to start')
+        now_pos = maze.get_start_point()
+        nodelist = maze.strategy(now_pos)[::-1]
+        nodelist.pop()
+        next_pos = nodelist.pop()
         car_dir = now_pos.get_direction(next_pos)
+        # the command when entering second
+        now_pos= next_pos
+        next_pos= nodelist.pop()
+        for i in nodelist:
+            print(i.get_index())
+        print(f'{now_pos.get_index()}|{next_pos.get_index()}|{maze.getAction(car_dir, now_pos, next_pos)}')
         cmds = "wsdax"
         cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
+        print(cmd)
         try:
             while True:
                 car_msg = input('car_msg?')
@@ -244,8 +224,8 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                         point.add_UID(car_msg)
                     elif(car_msg=='n'):
                         now_pos=next_pos
-                        nodelist= maze.strategy_2(now_pos, fin)
-                        if len(nodelist)>1: next_pos = nodelist[1]
+                        print(f'{now_pos.get_index()}|{next_pos.get_index}|{maze.getAction(car_dir, now_pos, next_pos)}')
+                        if len(nodelist)>0: next_pos= nodelist.pop()
                         else : print("end")
                         cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
 
@@ -302,4 +282,4 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
 #     args = parse_args()
 #     main(**vars(args))
 
-main(1,'COM3', 'WED2', SERVER_URL,MAZE_FILE)
+main(2,'COM3', 'WED2', SERVER_URL,MAZE_FILE)
