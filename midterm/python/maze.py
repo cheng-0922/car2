@@ -195,7 +195,7 @@ class Maze:
                 # new_list = self.BFS_2(start,dist)
                 # if new_list: result.append(self.BFS_2(start,dist))
                 start = dist
-                list_treasure.pop()
+                list_treasure.remove(dist)
         return result
 
     def strategy_2(self, node_from: Node, node_to: Node):
