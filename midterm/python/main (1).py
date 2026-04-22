@@ -28,11 +28,7 @@ MAZE_FILE = "data/medium_maze.csv"
 BT_PORT = ""
 
 
-<<<<<<< HEAD
-PORT = 'COM6'
-=======
 PORT = 'COM3'
->>>>>>> 3451c25af1bd40cd450d84d9f44693a22dff493e
 EXPECTED_NAME = 'HM10_Car2'
 
 def background_listener(bridge,point,maze):
@@ -46,9 +42,6 @@ def background_listener(bridge,point,maze):
     while True:
         car_msg = bridge.listen()
         if car_msg:
-            print(f"\r[HM10]: {car_msg}")
-            print("You: ", end="", flush=True)
-            # print(type(car_msg))
             print(f"\r[HM10]: {car_msg}\n", end="")
             if(len(car_msg)==8):
                 point.add_UID(car_msg)
@@ -57,26 +50,22 @@ def background_listener(bridge,point,maze):
                 nodelist= maze.strategy_2(now_pos, fin)
                 if len(nodelist)>1: next_pos = nodelist[1]
                 else : print("end")
-                cmds = "wsdax"
                 cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
 
                 bridge.send(cmd)
-            elif(car_msg=='a'):
-                print(car_dir)
-                match car_dir:
-                    case 1:
-                        car_dir = 4
-                    case 2:
-                        car_dir = 3
-                    case 3:
-                        car_dir = 1
-                    case 4:
-                        car_dir = 2
-                    case _:
-                        pass
-                print(car_dir)
             elif(car_msg=='d'):
-                print(car_dir)
+                match car_dir:
+                    case 1:
+                        car_dir = 4
+                    case 2:
+                        car_dir = 3
+                    case 3:
+                        car_dir = 1
+                    case 4:
+                        car_dir = 2
+                    case _:
+                        pass
+            elif(car_msg=='a'):
                 match car_dir:
                     case 1:
                         car_dir = 3
@@ -88,7 +77,6 @@ def background_listener(bridge,point,maze):
                         car_dir = 1
                     case _:
                         pass
-                print(car_dir)
             elif(car_msg=='s'):
                 match car_dir:
                     case 1:
@@ -188,13 +176,13 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                         point.add_UID(car_msg)
                     elif(car_msg=='n'):
                         now_pos=next_pos
-                        if (len(nodelist))>0: 
-                            nodelist= maze.strategy_2(now_pos, fin)
+                        nodelist= maze.strategy_2(now_pos, fin)
+                        if nodelist[1]: next_pos = nodelist[1]
                         else : print("end")
                         cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
 
                         bl.bridge.send(cmd)
-                    elif(car_msg=='d'):
+                    elif(car_msg=='r'):
                         match car_dir:
                             case 1:
                                 car_dir = 4
@@ -206,7 +194,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                                 car_dir = 2
                             case _:
                                 pass
-                    elif(car_msg=='a'):
+                    elif(car_msg=='l'):
                         match car_dir:
                             case 1:
                                 car_dir = 3
@@ -242,48 +230,39 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         
         fin = maze.get_node_dict()[12]
         now_pos= maze.get_start_point()
-        nodelist= maze.strategy(now_pos)[::1]
-        next_pos = nodelist.pop()
+        nodelist= maze.strategy_2(now_pos, fin)
+        next_pos = nodelist[1]
         car_dir = now_pos.get_direction(next_pos)
         cmds = "wsdax"
-        now_pos = next_pos
-        next_pos = nodelist.pop()
         cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
         try:
             while True:
                 car_msg = input('car_msg?')
                 if car_msg:
-                    print(f"\r[HM10]: {car_msg}")
-                    print("You: ", end="", flush=True)
-                    # print(type(car_msg))
                     print(f"\r[HM10]: {car_msg}\n", end="")
-                    if(len(car_msg)==8):
+                    if(len(car_msg)>2):
                         point.add_UID(car_msg)
                     elif(car_msg=='n'):
                         now_pos=next_pos
-                        
-                        if len(nodelist)>0: next_pos = nodelist.pop()
+                        nodelist= maze.strategy_2(now_pos, fin)
+                        if len(nodelist)>1: next_pos = nodelist[1]
                         else : print("end")
-                        cmds = "wsdax"
                         cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
 
                         print(cmd)
-                    elif(car_msg=='a'):
-                        print(car_dir)
-                        match car_dir:
-                            case 1:
-                                car_dir = 4
-                            case 2:
-                                car_dir = 3
-                            case 3:
-                                car_dir = 1
-                            case 4:
-                                car_dir = 2
-                            case _:
-                                pass
-                        print(car_dir)
                     elif(car_msg=='d'):
-                        print(car_dir)
+                        match car_dir:
+                            case 1:
+                                car_dir = 4
+                            case 2:
+                                car_dir = 3
+                            case 3:
+                                car_dir = 1
+                            case 4:
+                                car_dir = 2
+                            case _:
+                                pass
+                    elif(car_msg=='a'):
                         match car_dir:
                             case 1:
                                 car_dir = 3
@@ -295,7 +274,6 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                                 car_dir = 1
                             case _:
                                 pass
-                        print(car_dir)
                     elif(car_msg=='s'):
                         match car_dir:
                             case 1:
@@ -314,96 +292,14 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                     if user_msg: bl.bridge.send(user_msg)
         except (KeyboardInterrupt, EOFError):
             pass
-    elif mode == 3:
-        log.info("Mode 3: Self-testing mode.")
-        # Text Debug, Use keyboard send car_msg
-        
-        fin = maze.get_node_dict()[12]
-        now_pos= maze.get_start_point()
-        nodelist= maze.strategy(now_pos)[::1]
-        next_pos = nodelist.pop()
-        car_dir = now_pos.get_direction(next_pos)
-        now_pos = next_pos
-        next_pos = nodelist.pop()
-        cmds = "wsdax"
-        cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)-1]
-        try:
-            while True:
-                car_msg = input('car_msg?')
-                if car_msg:
-                    print(f"\r[HM10]: {car_msg}\n", end="")
-                    if(len(car_msg)==8):
-                        point.add_UID(car_msg)
-                    elif(car_msg=='n'):
-                        now_pos=next_pos
-                        if len(nodelist)>0: next_pos = nodelist.pop()
-                        else : print("end")
-<<<<<<< HEAD
-                        cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)-1]
-=======
-                        cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
-                        print(int(now_pos.get_index()))
->>>>>>> 3451c25af1bd40cd450d84d9f44693a22dff493e
 
-                        print(cmd)
-                    elif(car_msg=='d'):
-                        match car_dir:
-                            case 1:
-                                car_dir = 4
-                            case 2:
-                                car_dir = 3
-                            case 3:
-                                car_dir = 1
-                            case 4:
-                                car_dir = 2
-                            case _:
-                                pass
-                    elif(car_msg=='a'):
-                        match car_dir:
-                            case 1:
-                                car_dir = 3
-                            case 2:
-                                car_dir = 4
-                            case 3:
-                                car_dir = 2
-                            case 4:
-                                car_dir = 1
-                            case _:
-                                pass
-                    elif(car_msg=='s'):
-                        match car_dir:
-                            case 1:
-                                car_dir = 2
-                            case 2:
-                                car_dir = 1
-                            case 3:
-                                car_dir = 4
-                            case 4:
-                                car_dir = 3
-                            case _:
-                                pass
-                
-        except (KeyboardInterrupt, EOFError):
-            pass
     else:
         log.error("Invalid mode")
         sys.exit(1)
 
 
-
 # if __name__ == "__main__":
 #     args = parse_args()
 #     main(**vars(args))
 
-<<<<<<< HEAD
-main(2,'COM6', 'WED2', SERVER_URL,MAZE_FILE)
-=======
-main(2,'COM3', 'WED2', SERVER_URL,MAZE_FILE)
-
-    
-
-
-# if __name__ == "__main__":
-#     args = parse_args()
-#     main(**vars(args))
->>>>>>> 3451c25af1bd40cd450d84d9f44693a22dff493e
+main(1,'COM3', 'WED2', SERVER_URL,MAZE_FILE)
