@@ -39,7 +39,7 @@ class Node:
             if(node.index==s[0].index):
                 return Direction(s[1])
         
-        print(f"Not a successor of {self.index}")
+        # print(f"Not a successor of {self.index}")
         return 0
 
     def is_successor(self, node):
