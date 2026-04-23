@@ -203,32 +203,31 @@ class Maze:
     #     return result
 
     # testing strategy 2
-    def strategy(self, start_node: Node):
-        full_path = [start_node]
-        current_node = start_node
+    def strategy(self, node: Node):
+        result = [node]
+        current = node
         
-        # 找出所有死路 (Successor 數量為 1)
-        all_treasures = [n for n in self.nodes if len(n.get_successors()) == 1]
-        visited_treasures = set()
-        visited_treasures.add(start_node)
+        list_treasure = [n for n in self.nodes if len(n.get_successors()) == 1]
+        visited_treasure = set()
+        visited_treasure.add(node)
         total_score = 0
         
-        while len(visited_treasures) < len(all_treasures):
+        while len(visited_treasure) < len(list_treasure):
             best_target = None
             best_cp = -1.0
             best_sub_path = []
             
             # 1. 嘗試尋找 7 步內的最佳 CP 目標
-            for target in all_treasures:
-                if target == current_node or target in visited_treasures:
+            for target in list_treasure:
+                if target == current or target in visited_treasure:
                     continue
                 
-                path = self.BFS_2(current_node, target)
+                path = self.BFS_2(current, target)
                 if not path: continue
                 
                 steps = len(path) - 1
                 if steps <= 7:
-                    score = self.point(start_node, target) * 10
+                    score = self.point(node, target) * 10
                     cp = score / steps if steps > 0 else 0
                     if cp > best_cp:
                         best_cp = cp
@@ -238,11 +237,11 @@ class Maze:
             # 2. 如果找不到 7 步內的，使用「重定位」策略：找最近的目標
             if not best_target:
                 shortest_dist = float('inf')
-                for target in all_treasures:
-                    if target == current_node or target in visited_treasures:
+                for target in list_treasure:
+                    if target == current or target in visited_treasure:
                         continue
                     
-                    path = self.BFS_2(current_node, target)
+                    path = self.BFS_2(current, target)
                     if not path: continue
                     
                     steps = len(path) - 1
@@ -256,13 +255,13 @@ class Maze:
                 break
                 
             # 移動並更新
-            full_path.extend(best_sub_path[1:])
-            total_score += self.point(current_node, best_target)*10
-            current_node = best_target
-            visited_treasures.add(best_target)
+            result.extend(best_sub_path[1:])
+            total_score += self.point(current, best_target)*10
+            current = best_target
+            visited_treasure.add(best_target)
         
         print(f"Total score: {total_score}")        
-        return full_path
+        return result
 
     def strategy_2(self, node_from: Node, node_to: Node):
         return self.BFS_2(node_from, node_to)
