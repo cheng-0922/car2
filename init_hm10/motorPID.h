@@ -98,7 +98,6 @@ int straight(){
 void right(void(*f)()){
   int threshold=80;
   int threshold_m=40;
-  f();
   while(true){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
@@ -127,7 +126,6 @@ void right(void(*f)()){
 void left(void(*f)()){
   int threshold=80;
   int threshold_m=40;
-  f();
   while(true){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
@@ -148,12 +146,25 @@ void left(void(*f)()){
       int m = analogRead(analogPin3);
       int r2 = analogRead(analogPin2);
       int r3 = analogRead(analogPin1);
-      f();
       if((l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold))
         break;
       MotorWriting(0, 200);
     }
 
+}
+void back_to_line(){
+  int threshold=100;
+  int threshold_m=100;
+  while(true){
+      int l3 = analogRead(analogPin5);
+      int l2 = analogRead(analogPin4);
+      int m = analogRead(analogPin3);
+      int r2 = analogRead(analogPin2);
+      int r3 = analogRead(analogPin1);
+      if((l3 >=threshold) || (l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold) || (r3 >=threshold))
+        break;
+      MotorWriting(-150, -150);
+    }
 }
 char Tracking(char cmd, void(*f)()) {
   int threshold=100;
@@ -196,8 +207,10 @@ char Tracking(char cmd, void(*f)()) {
   MotorWriting(vL, vR);
   
   static int count=0;
+  // if((l3 <threshold) && (l2 <threshold) && (m <threshold_m) && (r2 <threshold) && (r3 <threshold)){
+  //   back_to_line();
+  // }
   if((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)) {
-    
     if(cmd!='q'){
       Serial3.print('n');
       if(cmd=='a') {
