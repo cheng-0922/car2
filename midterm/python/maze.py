@@ -217,7 +217,6 @@ class Maze:
             best_cp = -1.0
             best_sub_path = []
             
-            # 1. 嘗試尋找 7 步內的最佳 CP 目標
             for target in list_treasure:
                 if target == current or target in visited_treasure:
                     continue
@@ -234,7 +233,6 @@ class Maze:
                         best_target = target
                         best_sub_path = path
             
-            # 2. 如果找不到 7 步內的，使用「重定位」策略：找最近的目標
             if not best_target:
                 shortest_dist = float('inf')
                 for target in list_treasure:
@@ -250,11 +248,9 @@ class Maze:
                         best_target = target
                         best_sub_path = path
             
-            # 3. 如果連重定位都找不到（代表全走完了或無法到達）
             if not best_target:
                 break
                 
-            # 移動並更新
             result.extend(best_sub_path[1:])
             total_score += self.point(current, best_target)*10
             current = best_target
