@@ -16,6 +16,9 @@ int PWMB = 11;
 
 void back();
 void right();
+// char currentCmd = 'x'; 
+
+//   // 專門檢查藍牙的函數
 
 
 
@@ -42,6 +45,15 @@ void MotorWriting(double vL, double vR) {
   analogWrite(PWMA, vL);
   analogWrite(PWMB, vR);
 }
+// void checkBluetooth() {
+//   if (Serial3.available()) {
+//     currentCmd = Serial3.read();
+//     // 這裡可以加入你原本的邏輯，例如遇到特殊情況強制停止
+//     if (currentCmd == 'x') {
+//       MotorWriting(0, 0); 
+//     }
+//   }
+// }
 void back(void(*f)()){
   int threshold=120;
   int threshold_m=100;
@@ -203,6 +215,7 @@ char Tracking(char cmd, void(*f)()) {
   if(vL<-231) vL = -231;
   
   
+    // 在所有函數外面定義一個全域變數來存最新的指令
   
   MotorWriting(vL, vR);
   
@@ -212,22 +225,26 @@ char Tracking(char cmd, void(*f)()) {
   // }
   if((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)) {
     if(cmd!='q'){
-      Serial3.print('n');
+      
       if(cmd=='a') {
         // Serial3.print("left turn");
         left(f);
+        Serial3.print('n');
       }
       if(cmd=='d'){
         // Serial3.print("right turn");
         right(f);
+        Serial3.print('n');
       }
       if(cmd=='s') {
         // Serial3.print("right turn");
         back(f);
-        f();
+        Serial3.print('n');
+        // f();
       }
       if(cmd=='w'){
         straight();
+        Serial3.print('n');
       }
       return 'q';
     }

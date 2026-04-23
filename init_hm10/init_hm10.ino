@@ -117,6 +117,7 @@ void loop() {
     cmd = Serial3.read();
     if (cmd!='b') {
     Serial3.print(cmd);
+    delay(1);
       
     }
   }
@@ -152,7 +153,7 @@ void loop() {
     cmd = Tracking(cmd, (read));
     if(cmd=='s') read();
 
-    }
+  }
   else{
     MotorWriting(0,0); 
   }
