@@ -181,6 +181,7 @@ class Maze:
         for action in actions:
             cmds += cmd[action - 1]
         log.info(cmds)
+        cmds += 'sx'
         return cmds
     
     # # strategy for medium_maze
@@ -271,6 +272,7 @@ class Maze:
             current = best_target
             visited_treasure.add(best_target)
         
+        # result.extend(self.BFS_2(current,current))
         print(f"Total score: {total_score}")        
         return result
 
@@ -299,15 +301,17 @@ class Maze:
 
 
 # m = Maze("data/big_maze_114.csv")
-m= Maze("data/medium_maze.csv")
-nodelist = m.testBFS2(1,12)
-nodelist=m.strategy(m.node_dict[1])
-# # nodelist=m.strategy(m.nodes[24])
-acts = m.getActions(nodelist)
+# m= Maze("data/medium_maze.csv")
+# # nodelist = m.testBFS2(1,12)
+# nodelist=m.strategy(m.node_dict[1])
+# # # nodelist=m.strategy(m.nodes[24])
+# acts = m.getActions(nodelist)
 
-print(f'route:{m.actions_to_str(acts)}')
-for node in nodelist:
-    print(node.get_index())
+# print(f'route:{m.actions_to_str(acts)}')
+# for node in nodelist:
+#     print(node.get_index())
+# print(nodelist)
+
 
 
 
