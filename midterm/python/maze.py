@@ -182,7 +182,20 @@ class Maze:
             cmds += cmd[action - 1]
         log.info(cmds)
         return cmds
-
+    
+    def strategy(self, node: Node):
+        result = [node]
+        start = node
+        # result.extend(self.BFS_2(start,self.node_dict[7])[1:])
+        # start=self.node_dict[7]
+        for dist in self.nodes[::1]:
+            if (not dist in result )and len(dist.get_successors())==1:
+                result.extend(self.BFS_2(start,dist)[1:])
+                # new_list = self.BFS_2(start,dist)
+                # if new_list: result.append(self.BFS_2(start,dist))
+                start = dist
+        return result
+    # testing strategy 1
     # def strategy(self, node: Node):
     #     result = [node]
     #     start = node
@@ -192,7 +205,7 @@ class Maze:
     #     while(list_treasure):
     #         candidate = []
     #         for target in list_treasure:
-    #             if (not target in result)and len(target.get_successors())==1 and self.point(start, target) < 5:
+    #             if (not target in result)and len(target.get_successors())==1:
     #                 candidate.append(target)
     #                 self.point(start, target)
     #                 result.extend(self.BFS_2(start,target)[1:])
@@ -203,61 +216,61 @@ class Maze:
     #     return result
 
     # testing strategy 2
-    def strategy(self, node: Node):
-        result = [node]
-        current = node
+    # def strategy(self, node: Node):
+    #     result = [node]
+    #     current = node
         
-        list_treasure = [n for n in self.nodes if len(n.get_successors()) == 1]
-        visited_treasure = set()
-        visited_treasure.add(node)
-        total_score = 0
+    #     list_treasure = [n for n in self.nodes if len(n.get_successors()) == 1]
+    #     visited_treasure = set()
+    #     visited_treasure.add(node)
+    #     total_score = 0
         
-        while len(visited_treasure) < len(list_treasure):
-            best_target = None
-            best_cp = -1.0
-            best_sub_path = []
+    #     while len(visited_treasure) < len(list_treasure):
+    #         best_target = None
+    #         best_cp = -1.0
+    #         best_sub_path = []
             
-            for target in list_treasure:
-                if target == current or target in visited_treasure:
-                    continue
+    #         for target in list_treasure:
+    #             if target == current or target in visited_treasure:
+    #                 continue
                 
-                path = self.BFS_2(current, target)
-                if not path: continue
+    #             path = self.BFS_2(current, target)
+    #             if not path: continue
                 
-                steps = len(path) - 1
-                if steps <= 7:
-                    score = self.point(node, target) * 10
-                    cp = score / steps if steps > 0 else 0
-                    if cp > best_cp:
-                        best_cp = cp
-                        best_target = target
-                        best_sub_path = path
+    #             steps = len(path) - 1
+    #             if steps <= 7:
+    #                 score = self.point(node, target) * 10
+    #                 cp = score / steps if steps > 0 else 0
+    #                 if cp > best_cp:
+    #                     best_cp = cp
+    #                     best_target = target
+    #                     best_sub_path = path
             
-            if not best_target:
-                shortest_dist = float('inf')
-                for target in list_treasure:
-                    if target == current or target in visited_treasure:
-                        continue
+    #         if not best_target:
+    #             shortest_dist = float('inf')
+    #             for target in list_treasure:
+    #                 if target == current or target in visited_treasure:
+    #                     continue
                     
-                    path = self.BFS_2(current, target)
-                    if not path: continue
+    #                 path = self.BFS_2(current, target)
+    #                 if not path: continue
                     
-                    steps = len(path) - 1
-                    if steps < shortest_dist:
-                        shortest_dist = steps
-                        best_target = target
-                        best_sub_path = path
+    #                 steps = len(path) - 1
+    #                 if steps < shortest_dist:
+    #                     shortest_dist = steps
+    #                     best_target = target
+    #                     best_sub_path = path
             
-            if not best_target:
-                break
+    #         if not best_target:
+    #             break
                 
-            result.extend(best_sub_path[1:])
-            total_score += self.point(current, best_target)*10
-            current = best_target
-            visited_treasure.add(best_target)
+    #         result.extend(best_sub_path[1:])
+    #         total_score += self.point(current, best_target)*10
+    #         current = best_target
+    #         visited_treasure.add(best_target)
         
-        print(f"Total score: {total_score}")        
-        return result
+    #     print(f"Total score: {total_score}")        
+    #     return result
 
     def strategy_2(self, node_from: Node, node_to: Node):
         return self.BFS_2(node_from, node_to)
@@ -283,44 +296,43 @@ class Maze:
 
 
 
-m = Maze("data/big_maze_114.csv")
+# m = Maze("data/big_maze_114.csv")
+# m= Maze("data/medium_maze.csv")
 # nodelist = m.testBFS2(1,12)
-# nodelist=m.strategy(m.nodes[24])
+# nodelist=m.strategy(m.node_dict[1])
+# # nodelist=m.strategy(m.nodes[24])
 # acts = m.getActions(nodelist)
 
 # print(f'route:{m.actions_to_str(acts)}')
 # for node in nodelist:
 #     print(node.get_index())
 
-nodelist=m.strategy(m.node_dict[25])
-
-acts = m.getActions(nodelist)
-point_dict = dict()
-route_dict = dict()
-avg_dict = dict()
-for dist in m.nodes:
-    if dist.get_index() == 25: continue
-    if len(dist.get_successors())==1 :
-        nl = m.BFS_2(m.nodes[24], dist)
-        route_dict[int(dist.get_index())]= len(nl)-1
-        point_dict[int(dist.get_index())]= m.point(m.nodes[24],dist)
-        avg_dict [int(dist.get_index())]=  (m.point(m.nodes[24],dist)) /(len(nl)-1) 
 
 
-print(point_dict)
-print(route_dict)
-print(avg_dict)
-for node in nodelist[::1]:
-    print(int(node.get_index()))
-    nodelist.pop()
+# acts = m.getActions(nodelist)
+# point_dict = dict()
+# route_dict = dict()
+# avg_dict = dict()
+# for dist in m.nodes:
+#     if dist.get_index() == 25: continue
+#     if len(dist.get_successors())==1 :
+#         nl = m.BFS_2(m.nodes[24], dist)
+#         route_dict[int(dist.get_index())]= len(nl)-1
+#         point_dict[int(dist.get_index())]= m.point(m.nodes[24],dist)
+#         avg_dict [int(dist.get_index())]=  (m.point(m.nodes[24],dist)) /(len(nl)-1) 
+
+
+# print(point_dict)
+# print(route_dict)
+# print(avg_dict)
+# for node in nodelist[::1]:
+#     print(int(node.get_index()))
+#     nodelist.pop()
 
     
-print(f'route:{m.actions_to_str(acts)}')
-for node in nodelist:
-    print(node.get_index())
-for nodelist in m.strategy(m.nodes[0]):
-    acts = m.getActions(nodelist)
-    print(f'route:{m.actions_to_str(acts)}')
-# nodelist = m.testBFS(1)
-# acts = m.getActions(nodelist)
-# print(m.actions_to_str(acts))
+# print(f'route:{m.actions_to_str(acts)}')
+# for node in nodelist:
+#     print(node.get_index())
+# for nodelist in m.strategy(m.nodes[0]):
+#     acts = m.getActions(nodelist)
+#     print(f'route:{m.actions_to_str(acts)}')
