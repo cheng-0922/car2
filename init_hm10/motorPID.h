@@ -165,18 +165,20 @@ void left(void(*f)()){
 
 }
 void back_to_line(){
-  int threshold=50;
-  int threshold_m=50;
+  int threshold=100;
+  int threshold_m=100;
+  // Serial3.print('o');
   while(true){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
       int m = analogRead(analogPin3);
       int r2 = analogRead(analogPin2);
       int r3 = analogRead(analogPin1);
-      if((l3 >=threshold) || (l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold) || (r3 >=threshold))
-        delay(200);
+      if((l3 >=threshold) || (l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold) || (r3 >=threshold)){
         break;
+      } 
       MotorWriting(-150, -150);
+      delay(100);
     }
 }
 char Tracking(char cmd, void(*f)()) {
@@ -211,9 +213,9 @@ char Tracking(char cmd, void(*f)()) {
   //   stady[0]=vL; stady[1] = vR;
   // }
   if(vR>255) vR = 255;
-  if(vL>231) vL = 231;
+  if(vL>255) vL = 255;
   if(vR<-255) vR = -255;
-  if(vL<-231) vL = -231;
+  if(vL<-255) vL = -255;
   
   
     // 在所有函數外面定義一個全域變數來存最新的指令
@@ -222,7 +224,10 @@ char Tracking(char cmd, void(*f)()) {
   
   static int count=0;
   if((l3 <threshold-50) && (l2 <threshold-50) && (m <threshold_m+10) && (r2 <threshold-50) && (r3 <threshold-50)){
-    back_to_line();
+    delay(200);
+      if((l3 <threshold-50) && (l2 <threshold-50) && (m <threshold_m+10) && (r2 <threshold-50) && (r3 <threshold-50)){
+          back_to_line();
+      }
   }
   if((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)) {
     if(cmd!='q'){
