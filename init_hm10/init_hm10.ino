@@ -148,6 +148,9 @@ void loop() {
     Serial3.print(r3);
     delay(2000);
   }
+  else if (cmd=='m'){
+    MotorWriting(200, 200);
+  }
   if(cmd!='x'){
     // control(Tracking(control('0'), (read)));
     cmd = Tracking(cmd, (read));
