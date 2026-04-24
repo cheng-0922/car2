@@ -82,7 +82,9 @@ def background_listener(bridge,point,maze):
                 # bridge.send(cmd)
             if(car_msg=='n'):
                 now_pos=next_pos
-                if len(nodelist)>0: next_pos= nodelist.pop()
+                if len(nodelist)>0: 
+                    next_pos= nodelist.pop()
+                    cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
                 else : 
                     if(stop) :bridge.send('x')
                     stop = True
@@ -312,4 +314,4 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
 #     args = parse_args()
 #     main(**vars(args))
 
-main(1,'COM6', 'WED2', SERVER_URL,MAZE_FILE)
+main(1,'COM3', 'WED2', SERVER_URL,MAZE_FILE)
