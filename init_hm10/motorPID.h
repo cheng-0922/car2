@@ -165,8 +165,8 @@ void left(void(*f)()){
 
 }
 void back_to_line(){
-  int threshold=100;
-  int threshold_m=100;
+  int threshold=50;
+  int threshold_m=50;
   while(true){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
@@ -174,6 +174,7 @@ void back_to_line(){
       int r2 = analogRead(analogPin2);
       int r3 = analogRead(analogPin1);
       if((l3 >=threshold) || (l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold) || (r3 >=threshold))
+        delay(200);
         break;
       MotorWriting(-150, -150);
     }
@@ -186,8 +187,8 @@ char Tracking(char cmd, void(*f)()) {
   int m = analogRead(analogPin3);
   int r2 = analogRead(analogPin2);
   int r3 = analogRead(analogPin1);
-  double w1= 4;
-  double w2= 1;
+  double w1= 5;
+  double w2= 2;
   double w3= 1;
   double w4= 4;
   double Kp= 100;
@@ -220,9 +221,9 @@ char Tracking(char cmd, void(*f)()) {
   MotorWriting(vL, vR);
   
   static int count=0;
-  // if((l3 <threshold) && (l2 <threshold) && (m <threshold_m) && (r2 <threshold) && (r3 <threshold)){
-  //   back_to_line();
-  // }
+  if((l3 <threshold-50) && (l2 <threshold-50) && (m <threshold_m+10) && (r2 <threshold-50) && (r3 <threshold-50)){
+    back_to_line();
+  }
   if((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)) {
     if(cmd!='q'){
       

@@ -28,7 +28,7 @@ MAZE_FILE = "data/medium_maze.csv"
 BT_PORT = ""
 
 
-PORT = 'COM6'
+PORT = 'COM9'
 EXPECTED_NAME = 'HM10_Car2'
 
 def background_listener(bridge,point,maze):
