@@ -15,6 +15,13 @@ import time
 import sys
 import threading
 
+class Timer:
+    def __enter__(self):
+        self.start = time.time()
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        print(time.time() - self.start)
+
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
@@ -28,7 +35,7 @@ MAZE_FILE = "data/medium_maze.csv"
 BT_PORT = ""
 
 
-PORT = 'COM6'
+PORT = 'COM3'
 EXPECTED_NAME = 'HM10_Car2'
 
 def background_listener(bridge,point,maze):
@@ -42,6 +49,10 @@ def background_listener(bridge,point,maze):
     bridge.send('x') #stop initially
     time.sleep(2)
     print('wait 1 second, please put it to start')
+    start = 'q'
+    while start=='q':
+        start = input("key to start")
+    
     now_pos = maze.get_start_point()
     nodelist = maze.strategy(now_pos)[::-1]
     nodelist.pop()
@@ -71,7 +82,9 @@ def background_listener(bridge,point,maze):
                 # bridge.send(cmd)
             if(car_msg=='n'):
                 now_pos=next_pos
-                if len(nodelist)>0: next_pos= nodelist.pop()
+                if len(nodelist)>0: 
+                    next_pos= nodelist.pop()
+                    cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
                 else : 
                     if(stop) :bridge.send('x')
                     stop = True
@@ -79,7 +92,9 @@ def background_listener(bridge,point,maze):
                 if(maze.getAction(car_dir, now_pos, next_pos)):
                     cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
                 else : 
-                    if(endend): cmd = 'x'
+                    if(endend):
+                        time.sleep(1) 
+                        cmd = 'x'
                     else :
                         cmd = 's'
                         endend = True
@@ -299,4 +314,4 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
 #     args = parse_args()
 #     main(**vars(args))
 
-main(1,'COM6', 'WED2', SERVER_URL,MAZE_FILE)
+main(1,'COM3', 'WED2', SERVER_URL,MAZE_FILE)

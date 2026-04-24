@@ -107,7 +107,7 @@ int straight(){
     }
   
 }
-void right(void(*f)()){
+void right(){
   int threshold=80;
   int threshold_m=40;
   while(true){
@@ -135,7 +135,7 @@ void right(void(*f)()){
   
 
 }
-void left(void(*f)()){
+void left(){
   int threshold=80;
   int threshold_m=40;
   while(true){
@@ -164,9 +164,9 @@ void left(void(*f)()){
     }
 
 }
-void back_to_line(){
-  int threshold=100;
-  int threshold_m=100;
+void back_to_line(int to_turn){
+  int threshold=50;
+  int threshold_m=50;
   // Serial3.print('o');
   while(true){
       int l3 = analogRead(analogPin5);
@@ -177,7 +177,7 @@ void back_to_line(){
       if((l3 >=threshold) || (l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold) || (r3 >=threshold)){
         break;
       } 
-      MotorWriting(-150, -150);
+      MotorWriting(-150-to_turn, -150+to_turn);
       delay(100);
     }
 }
@@ -221,12 +221,11 @@ char Tracking(char cmd, void(*f)()) {
     // 在所有函數外面定義一個全域變數來存最新的指令
   
   MotorWriting(vL, vR);
-  
   static int count=0;
   if((l3 <threshold-50) && (l2 <threshold-50) && (m <threshold_m+10) && (r2 <threshold-50) && (r3 <threshold-50)){
     delay(200);
       if((l3 <threshold-50) && (l2 <threshold-50) && (m <threshold_m+10) && (r2 <threshold-50) && (r3 <threshold-50)){
-          back_to_line();
+          back_to_line(0);
       }
   }
   if((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)) {
@@ -234,12 +233,14 @@ char Tracking(char cmd, void(*f)()) {
       
       if(cmd=='a') {
         // Serial3.print("left turn");
-        left(f);
+        left();
+        back_to_line(100);
         Serial3.print('n');
       }
       if(cmd=='d'){
         // Serial3.print("right turn");
-        right(f);
+        right();
+        back_to_line(-100);
         Serial3.print('n');
       }
       if(cmd=='s') {
@@ -258,7 +259,7 @@ char Tracking(char cmd, void(*f)()) {
     if(cmd == 'z'){
       switch(count) {
         case 0: {
-          right(f); count++;break;
+          right(); count++;break;
         }
         case 1: {
           back(f); count++; break;
@@ -273,7 +274,7 @@ char Tracking(char cmd, void(*f)()) {
           back(f); count++; break;
         }
         case 4:{
-          left(f); count++; break;
+          left(); count++; break;
         }
         case 5: {
           back(f); count=0; break;
@@ -288,4 +289,3 @@ char Tracking(char cmd, void(*f)()) {
   lastError=error;
   return cmd;
 }
-
