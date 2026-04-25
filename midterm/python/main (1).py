@@ -35,7 +35,8 @@ MAZE_FILE = "data/medium_maze.csv"
 BT_PORT = ""
 
 
-PORT = 'COM6'
+PORT = 'COM7' \
+''
 EXPECTED_NAME = 'HM10_Car2'
 
 def background_listener(bridge,point,maze):
@@ -66,7 +67,7 @@ def background_listener(bridge,point,maze):
     bridge.send('b')
     time.sleep(0.5)
     cmds = "wsdax"
-
+    uid=set()
     # the command when entering second
     now_pos= next_pos
     next_pos= nodelist.pop()
@@ -143,7 +144,9 @@ def background_listener(bridge,point,maze):
                     case _:
                         pass
             if(len(car_msg)==8):
-                point.add_UID(car_msg)
+                if car_msg not in uid:
+                    uid.add(car_msg)               
+                    point.add_UID(car_msg)
         time.sleep(0.1)
 class Bluetooth:     
     def __init__(self):
