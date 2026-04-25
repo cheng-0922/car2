@@ -33,9 +33,6 @@ TEAM_NAME = "TEAM2"
 SERVER_URL = "http://140.112.175.18"
 MAZE_FILE = "data/medium_maze.csv"
 BT_PORT = ""
-
-
-PORT = 'COM3'
 EXPECTED_NAME = 'HM10_Car2'
 
 def background_listener(bridge,point,maze,nodelist):
