@@ -39,13 +39,7 @@ PORT = 'COM3'
 EXPECTED_NAME = 'HM10_Car2'
 
 def background_listener(bridge,point,maze):
-    # fin = maze.get_node_dict()[12]
-    # now_pos= maze.get_start_point()
-    # nodelist= maze.strategy_2(now_pos, fin)
-    # next_pos = nodelist[1]
-    # car_dir = now_pos.get_direction(next_pos)
-    # cmds = "wsdax"
-    # cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
+
     bridge.send('x') #stop initially
     time.sleep(2)
     print('wait 1 second, please put it to start')
@@ -59,7 +53,7 @@ def background_listener(bridge,point,maze):
     nodelist = maze.strategy(now_pos)[::1]
     nodelist.extend(maze.strategy(nodelist[-1])[1::1])
     nodelist.reverse()
-    print(len(nodelist))
+    # print(len(nodelist))
     nodelist.pop()
     next_pos = nodelist.pop()
     car_dir = now_pos.get_direction(next_pos)
@@ -78,13 +72,7 @@ def background_listener(bridge,point,maze):
         if car_msg:
             print(f"\r[HM10]: {car_msg}\n", end="")
             stop = False
-            # if (car_msg=='b') :
-            #     now_pos=next_pos
-            #     if len(nodelist)>0: next_pos= nodelist.pop()
-            #     else : bridge.send('w')
-            #     cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
 
-                # bridge.send(cmd)
             if(car_msg=='n'):
                 now_pos=next_pos
                 if len(nodelist)>0: 
@@ -148,8 +136,8 @@ def background_listener(bridge,point,maze):
                 point.add_UID(hex_str)
         time.sleep(0.1)
 class Bluetooth:     
-    def __init__(self):
-        self.bridge = HM10ESP32Bridge(port=PORT)
+    def __init__(self, port):
+        self.bridge = HM10ESP32Bridge(port)
         
         # 1. Configuration Check
         current_name = self.bridge.get_hm10_name()
@@ -207,13 +195,13 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
     if mode == "0":
         log.info("Mode 0: For treasure-hunting")
         # TODO : for treasure-hunting, which encourages you to hunt as many scores as possible
-        bl = Bluetooth()
+        bl = Bluetooth(bt_port)
         
 
     elif mode == "1":
         log.info("Mode 1: Self-testing mode.")
         # TODO: You can write your code to test specific function.
-        bl = Bluetooth()
+        bl = Bluetooth(bt_port)
         maze = Maze(maze_file)
         point = ScoreboardServer(team_name, server_url)
         
