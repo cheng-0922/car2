@@ -321,4 +321,4 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
 #     args = parse_args()
 #     main(**vars(args))
 
-main(1,'COM3', 'WED2', SERVER_URL,MAZE_FILE)
+main(1,'COM3', 'WED2', SERVER_URL,MAZE_FILE),'COM6', 'WED2', SERVER_URL,MAZE_FILE)

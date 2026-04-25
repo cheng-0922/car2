@@ -235,13 +235,14 @@ void PICC_DumpDetails(Print &output, MFRC522::Uid *uid  ///< Pointer to Uid stru
 ) {
   // UID
   // output.print(F("Card UID:"));
-  for (byte i = 0; i < uid->size; i++) {
-    if (uid->uidByte[i] < 0x10)
-      output.print(F("0"));
-    else
-      output.print(F(""));
-    output.print(uid->uidByte[i], HEX);
+  uint32_t value = 0;
+
+  for (byte i = 0; i < 4; i++) {
+    value = (value << 8) | uid->uidByte[i];
   }
+
+// 以 HEX 輸出（或 DEC 都可以）
+  output.println(value, HEX);
   output.println();
 
   // SAK
