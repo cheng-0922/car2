@@ -46,7 +46,7 @@ def background_listener(bridge,point,maze,nodelist):
     now_pos= next_pos
     next_pos= nodelist.pop()
     cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
-    bl.bridge.send(cmd)
+    bridge.send(cmd)
     while True:
         car_msg = bridge.listen()
         if car_msg:
