@@ -64,7 +64,7 @@ void back(void(*f)()){
   int r3 = analogRead(analogPin1);
 
   MotorWriting(255, -255);
-  delay(300);
+  delay(250);
   f();
   while(true){
       int l3 = analogRead(analogPin5);
@@ -110,17 +110,17 @@ int straight(){
 void right(){
   int threshold=80;
   int threshold_m=40;
-  while(true){
-      int l3 = analogRead(analogPin5);
-      int l2 = analogRead(analogPin4);
-      int m = analogRead(analogPin3);
-      int r2 = analogRead(analogPin2);
-      int r3 = analogRead(analogPin1);
-      if(!((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)))
-        break;
-    }
-  MotorWriting(255,0); 
-  delay(250);
+  // while(true){
+  //     int l3 = analogRead(analogPin5);
+  //     int l2 = analogRead(analogPin4);
+  //     int m = analogRead(analogPin3);
+  //     int r2 = analogRead(analogPin2);
+  //     int r3 = analogRead(analogPin1);
+  //     if(!((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)))
+  //       break;
+  //   }
+  MotorWriting(255, 70); 
+  delay(400);
   while(true){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
@@ -129,7 +129,7 @@ void right(){
       int r3 = analogRead(analogPin1);
       if((l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold))
         break;
-      MotorWriting(255,0); 
+      MotorWriting(255,70); 
     }
   
 
@@ -137,19 +137,19 @@ void right(){
 void left(){
   int threshold=80;
   int threshold_m=40;
-  while(true){
-      int l3 = analogRead(analogPin5);
-      int l2 = analogRead(analogPin4);
-      int m = analogRead(analogPin3);
-      int r2 = analogRead(analogPin2);
-      int r3 = analogRead(analogPin1);
+  // while(true){
+  //     int l3 = analogRead(analogPin5);
+  //     int l2 = analogRead(analogPin4);
+  //     int m = analogRead(analogPin3);
+  //     int r2 = analogRead(analogPin2);
+  //     int r3 = analogRead(analogPin1);
       
-      if(!((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)))
-        break;
-    }
+  //     if(!((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)))
+  //       break;
+  //   }
   
-  MotorWriting(0,255); 
-  delay(250);
+  MotorWriting(100,255); 
+  delay(400);
   while(true){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
@@ -158,7 +158,7 @@ void left(){
       int r3 = analogRead(analogPin1);
       if((l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold))
         break;
-      MotorWriting(0, 255);
+      MotorWriting(100, 255);
     }
 
 }
