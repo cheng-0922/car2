@@ -38,35 +38,15 @@ BT_PORT = ""
 PORT = 'COM3'
 EXPECTED_NAME = 'HM10_Car2'
 
-def background_listener(bridge,point,maze):
-
-    bridge.send('x') #stop initially
-    time.sleep(2)
-    print('wait 1 second, please put it to start')
-    start = 'q'
-    while start=='q':
-        start = input("key to start")
-    point = ScoreboardServer('WED2', SERVER_URL)
-
-    
-    now_pos = maze.get_start_point()
-    nodelist = maze.strategy(now_pos)[::1]
-    nodelist.extend(maze.strategy(nodelist[-1])[1::1])
-    nodelist.reverse()
-    # print(len(nodelist))
-    nodelist.pop()
-    next_pos = nodelist.pop()
-    car_dir = now_pos.get_direction(next_pos)
-    bridge.send('b')
-    time.sleep(0.5)
+def background_listener(bridge,point,maze,nodelist):
+    endend = False
     cmds = "wsdax"
 
     # the command when entering second
     now_pos= next_pos
     next_pos= nodelist.pop()
     cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
-    bridge.send(cmd)
-    endend = False
+    bl.bridge.send(cmd)
     while True:
         car_msg = bridge.listen()
         if car_msg:
@@ -135,6 +115,7 @@ def background_listener(bridge,point,maze):
                 hex_str = f"{value:08X}"
                 point.add_UID(hex_str)
         time.sleep(0.1)
+
 class Bluetooth:     
     def __init__(self, port):
         self.bridge = HM10ESP32Bridge(port)
@@ -153,7 +134,7 @@ class Bluetooth:
                 print("✅ Name updated successfully. Resetting ESP32...")
                 self.bridge.reset()
                 # Re-init after reset
-                self.bridge = HM10ESP32Bridge(port=PORT)
+                self.bridge = HM10ESP32Bridge(port)
             else:
                 print("❌ Failed to set name. Exiting.")
                 
@@ -164,10 +145,7 @@ class Bluetooth:
             sys.exit(0)
 
         print(f"✨ Ready! Connected to {EXPECTED_NAME}")
-        
 
-        
-    
     print("\nChat closed.")
 
 
@@ -204,8 +182,29 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         bl = Bluetooth(bt_port)
         maze = Maze(maze_file)
         point = ScoreboardServer(team_name, server_url)
+        bl.bridge.send('x') #stop initially
+        time.sleep(2)
+        print('wait 1 second, please put it to start')
+        start = 'q'
+        while start=='q':
+            start = input("key to start")
+        point = ScoreboardServer('WED2', SERVER_URL)
+
         
-        threading.Thread(target=background_listener, args=(bl.bridge,point,maze), daemon=True).start()
+        now_pos = maze.get_start_point()
+        nodelist = maze.strategy(now_pos)[::1]
+        nodelist.extend(maze.strategy(nodelist[-1])[1::1])
+        nodelist.reverse()
+        # print(len(nodelist))
+        nodelist.pop()
+        next_pos = nodelist.pop()
+        car_dir = now_pos.get_direction(next_pos)
+        bl.bridge.send('b')
+        time.sleep(0.5)
+
+        # loop of 
+        threading.Thread(target=background_listener, args=(bl.bridge,point,maze,nodelist), daemon=True).start()
+        
         try:
             while True:
                 user_msg = input("You: ")
