@@ -35,7 +35,7 @@ MAZE_FILE = "data/medium_maze.csv"
 BT_PORT = ""
 
 
-PORT = 'COM3'
+PORT = 'COM6'
 EXPECTED_NAME = 'HM10_Car2'
 
 def background_listener(bridge,point,maze):
@@ -52,9 +52,14 @@ def background_listener(bridge,point,maze):
     start = 'q'
     while start=='q':
         start = input("key to start")
+    point = ScoreboardServer('WED2', SERVER_URL)
+
     
     now_pos = maze.get_start_point()
-    nodelist = maze.strategy(now_pos)[::-1]
+    nodelist = maze.strategy(now_pos)[::1]
+    nodelist.extend(maze.strategy(nodelist[-1])[1::1])
+    nodelist.reverse()
+    print(len(nodelist))
     nodelist.pop()
     next_pos = nodelist.pop()
     car_dir = now_pos.get_direction(next_pos)
@@ -314,4 +319,4 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
 #     args = parse_args()
 #     main(**vars(args))
 
-main(1,'COM3', 'WED2', SERVER_URL,MAZE_FILE)
+main(1,'COM6', 'WED2', SERVER_URL,MAZE_FILE)

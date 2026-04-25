@@ -241,7 +241,7 @@ class Maze:
                 if not path: continue
                 
                 steps = len(path) - 1
-                if steps <= 5:
+                if steps <= 7:
                     score = self.point(node, target) * 10
                     cp = score / steps if steps > 0 else 0
                     if cp > best_cp:
@@ -268,7 +268,7 @@ class Maze:
                 break
                 
             result.extend(best_sub_path[1:])
-            total_score += self.point(current, best_target)*10
+            total_score += self.point(node, best_target)*10
             current = best_target
             visited_treasure.add(best_target)
         
@@ -301,16 +301,15 @@ class Maze:
 
 
 # m = Maze("data/big_maze_114.csv")
-m= Maze("data/medium_maze.csv")
+m= Maze("data/big_maze_114.csv")
 # nodelist = m.testBFS2(1,12)
-nodelist=m.strategy(m.node_dict[1])
+nodelist=m.strategy(m.node_dict[25])
 # # nodelist=m.strategy(m.nodes[24])
 acts = m.getActions(nodelist)
 
 print(f'route:{m.actions_to_str(acts)}')
 for node in nodelist:
     print(node.get_index())
-print(nodelist)
 
 
 
