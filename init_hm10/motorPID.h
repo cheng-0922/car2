@@ -42,6 +42,9 @@ void MotorWriting(double vL, double vR) {
   digitalWrite(AIN2, HIGH);
   vL = -vL; //因為analogWrite只吃正數，所以如果本來是負數，就要乘-1
   }
+  if(vR>255) vR = 255;
+  if(vL>255) vL = 255;
+  vL*=0.78; vR*=0.72;
   analogWrite(PWMA, vL);
   analogWrite(PWMB, vR);
 }
@@ -63,18 +66,17 @@ void back(void(*f)()){
   int r2 = analogRead(analogPin2);
   int r3 = analogRead(analogPin1);
 
-  MotorWriting(255, -255);
-  delay(300);
-  f();
+  MotorWriting(150, -150);
+  delay(400);
   while(true){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
       int m = analogRead(analogPin3);
       int r2 = analogRead(analogPin2);
       int r3 = analogRead(analogPin1);
-      if((l3>= threshold) || (l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold || (r3 >= threshold)))
+      if((l3 >=threshold) || (l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold) || (r3 >=threshold))
         break;
-      MotorWriting(255, -255);
+      MotorWriting(80, -80);
       delay(1);
   }
 
@@ -108,7 +110,7 @@ int straight(){
   
 }
 void right(){
-  int threshold=80;
+  int threshold=100;
   int threshold_m=40;
   // while(true){
   //     int l3 = analogRead(analogPin5);
@@ -119,8 +121,8 @@ void right(){
   //     if(!((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)))
   //       break;
   //   }
-  MotorWriting(255, 70); 
-  delay(400);
+  MotorWriting(180, 0); 
+  delay(300);
   while(true){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
@@ -129,13 +131,13 @@ void right(){
       int r3 = analogRead(analogPin1);
       if((l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold))
         break;
-      MotorWriting(255,70); 
+      MotorWriting(150,0); 
     }
   
 
 }
 void left(){
-  int threshold=80;
+  int threshold=100;
   int threshold_m=40;
   // while(true){
   //     int l3 = analogRead(analogPin5);
@@ -148,8 +150,8 @@ void left(){
   //       break;
   //   }
   
-  MotorWriting(100,255); 
-  delay(400);
+  MotorWriting(0,180); 
+  delay(300);
   while(true){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
@@ -158,7 +160,7 @@ void left(){
       int r3 = analogRead(analogPin1);
       if((l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold))
         break;
-      MotorWriting(100, 255);
+      MotorWriting(0, 150);
     }
 
 }
@@ -191,7 +193,7 @@ char Tracking(char cmd, void(*f)()) {
   double w2= 2;
   double w3= 1;
   double w4= 4;
-  double Kp= 100;
+  double Kp= 70;
 
   static double stady[2] = {250,250};
   // static double stady[2] = {200,178};
@@ -199,7 +201,7 @@ char Tracking(char cmd, void(*f)()) {
   double Tpr=stady[0];
   double Tpl=stady[1];
   double error = (l3*(-w1) + l2*(-w2) + r2*w3 + r3*w4)/(l3 + l2 + m + r2 + r3);
-  double Kd=15;           // 參數，手動調整
+  double Kd=25;           // 參數，手動調整
   static double lastError=0;    // 前次偏移誤差
   double dError = error - lastError;
   double powerCorrection = Kp*error + Kd*dError;
@@ -210,11 +212,7 @@ char Tracking(char cmd, void(*f)()) {
   // if(abs( error )<1){
   //   stady[0]=vL; stady[1] = vR;
   // }
-  
-  if(vR>255) vR = 255;
-  if(vL>255) vL = 255;
-  if(vR<-255) vR = -255;
-  if(vL<-255) vL = -255;
+
   if(cmd=='m'){
     Serial3.print(vL);
     Serial3.print('|');
@@ -222,12 +220,15 @@ char Tracking(char cmd, void(*f)()) {
   }
   
     // 在所有函數外面定義一個全域變數來存最新的指令
-  
+  if(cmd=='s'){
+    vL*=0.8; vR*=0.8;
+  }
   MotorWriting(vL, vR);
   static int count=0;
-  // if((l3 <threshold-50) && (l2 <threshold-50) && (m <threshold_m+10) && (r2 <threshold-50) && (r3 <threshold-50)){
-  //   delay(200);
-  //     if((l3 <threshold-50) && (l2 <threshold-50) && (m <threshold_m+10) && (r2 <threshold-50) && (r3 <threshold-50)){
+  // if((l3 <threshold-60) && (l2 <threshold-60) && (m <threshold_m) && (r2 <threshold-60) && (r3 <threshold-60)){
+
+  //   delay(1000);
+  //     if((l3 <threshold-60) && (l2 <threshold-60) && (m <threshold_m) && (r2 <threshold-60) && (r3 <threshold-60)){
   //         back_to_line(0);
   //     }
   // }
