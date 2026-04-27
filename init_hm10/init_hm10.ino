@@ -149,8 +149,7 @@ void loop() {
     delay(2000);
   }
   else if (cmd=='m'){
-    // MotorWriting(200, 200);
-    Tracking(cmd,(read));
+    MotorWriting(200, 200);
   }
   if(cmd!='x'){
     // control(Tracking(control('0'), (read)));
