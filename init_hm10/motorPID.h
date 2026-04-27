@@ -63,8 +63,8 @@ void back(void(*f)()){
   int r2 = analogRead(analogPin2);
   int r3 = analogRead(analogPin1);
 
-  MotorWriting(255, -255);
-  delay(300);
+  MotorWriting(200, -200);
+  delay(400);
   f();
   while(true){
       int l3 = analogRead(analogPin5);
@@ -74,7 +74,7 @@ void back(void(*f)()){
       int r3 = analogRead(analogPin1);
       if((l3>= threshold) || (l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold || (r3 >= threshold)))
         break;
-      MotorWriting(255, -255);
+      MotorWriting(150, -150);
       delay(1);
   }
 
@@ -118,9 +118,10 @@ void right(){
       int r3 = analogRead(analogPin1);
       if(!((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)))
         break;
+      MotorWriting(178, 200);
     }
-  MotorWriting(255,0); 
-  delay(250);
+  MotorWriting(200,0); 
+  delay(350);
   while(true){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
@@ -129,7 +130,7 @@ void right(){
       int r3 = analogRead(analogPin1);
       if((l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold))
         break;
-      MotorWriting(255,0); 
+      MotorWriting(178,0); 
     }
   
 
@@ -146,10 +147,11 @@ void left(){
       
       if(!((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)))
         break;
+      MotorWriting(178, 200);
     }
   
   MotorWriting(0,255); 
-  delay(250);
+  delay(400);
   while(true){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
@@ -158,7 +160,7 @@ void left(){
       int r3 = analogRead(analogPin1);
       if((l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold))
         break;
-      MotorWriting(0, 255);
+      MotorWriting(0, 200);
     }
 
 }
@@ -210,16 +212,11 @@ char Tracking(char cmd, void(*f)()) {
   // if(abs( error )<1){
   //   stady[0]=vL; stady[1] = vR;
   // }
-  
   if(vR>255) vR = 255;
   if(vL>255) vL = 255;
   if(vR<-255) vR = -255;
   if(vL<-255) vL = -255;
-  if(cmd=='m'){
-    Serial3.print(vL);
-    Serial3.print('|');
-    Serial3.print(vR);
-  }
+  
   
     // 在所有函數外面定義一個全域變數來存最新的指令
   
