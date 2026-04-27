@@ -33,10 +33,44 @@ TEAM_NAME = "TEAM2"
 SERVER_URL = "http://140.112.175.18"
 MAZE_FILE = "data/medium_maze.csv"
 BT_PORT = ""
+
+
+PORT = 'COM6'
 EXPECTED_NAME = 'HM10_Car2'
 
-def background_listener(bridge,point,maze,nodelist):
-    endend = False
+def background_listener(bridge,point,maze):
+    # fin = maze.get_node_dict()[12]
+    # now_pos= maze.get_start_point()
+    # nodelist= maze.strategy_2(now_pos, fin)
+    # next_pos = nodelist[1]
+    # car_dir = now_pos.get_direction(next_pos)
+    # cmds = "wsdax"
+    # cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
+    bridge.send('x') #stop initially
+    time.sleep(2)
+    print('wait 1 second, please put it to start')
+    start = 'q'
+    while start=='q':
+        start = input("key to start")
+    # point = ScoreboardServer('WED2', SERVER_URL)
+
+    point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
+    
+    now_pos = maze.get_start_point()
+    nodelist = maze.strategy(now_pos)[::1]
+    nodelist.extend(maze.strategy(nodelist[-1])[1::1])
+    nodelist.extend(maze.strategy(nodelist[-1])[1::1])
+    nodelist.extend(maze.strategy(nodelist[-1])[1::1])
+    nodelist.extend(maze.strategy(nodelist[-1])[1::1])
+
+    nodelist.reverse()
+    print(len(nodelist))
+    
+    nodelist.pop()
+    next_pos = nodelist.pop()
+    car_dir = now_pos.get_direction(next_pos)
+    bridge.send('b')
+    time.sleep(0.5)
     cmds = "wsdax"
 
     # the command when entering second
@@ -44,12 +78,19 @@ def background_listener(bridge,point,maze,nodelist):
     next_pos= nodelist.pop()
     cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
     bridge.send(cmd)
+    endend = False
     while True:
         car_msg = bridge.listen()
         if car_msg:
             print(f"\r[HM10]: {car_msg}\n", end="")
             stop = False
+            # if (car_msg=='b') :
+            #     now_pos=next_pos
+            #     if len(nodelist)>0: next_pos= nodelist.pop()
+            #     else : bridge.send('w')
+            #     cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
 
+                # bridge.send(cmd)
             if(car_msg=='n'):
                 now_pos=next_pos
                 if len(nodelist)>0: 
@@ -108,14 +149,11 @@ def background_listener(bridge,point,maze,nodelist):
                     case _:
                         pass
             if(len(car_msg)==8):
-                value = int(car_msg, 16)
-                hex_str = f"{value:08X}"
-                point.add_UID(hex_str)
+                point.add_UID(car_msg)
         time.sleep(0.1)
-
 class Bluetooth:     
-    def __init__(self, port):
-        self.bridge = HM10ESP32Bridge(port)
+    def __init__(self):
+        self.bridge = HM10ESP32Bridge(port=PORT)
         
         # 1. Configuration Check
         current_name = self.bridge.get_hm10_name()
@@ -131,7 +169,7 @@ class Bluetooth:
                 print("✅ Name updated successfully. Resetting ESP32...")
                 self.bridge.reset()
                 # Re-init after reset
-                self.bridge = HM10ESP32Bridge(port)
+                self.bridge = HM10ESP32Bridge(port=PORT)
             else:
                 print("❌ Failed to set name. Exiting.")
                 
@@ -142,7 +180,10 @@ class Bluetooth:
             sys.exit(0)
 
         print(f"✨ Ready! Connected to {EXPECTED_NAME}")
+        
 
+        
+    
     print("\nChat closed.")
 
 
@@ -161,7 +202,7 @@ def parse_args():
 
 def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: str):
     
-    # point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
+    point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
 
     ### Bluetooth connection haven't been implemented yet, we will update ASAP ###
     # interface = BTInterface(port=bt_port)
@@ -170,38 +211,17 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
     if mode == "0":
         log.info("Mode 0: For treasure-hunting")
         # TODO : for treasure-hunting, which encourages you to hunt as many scores as possible
-        bl = Bluetooth(bt_port)
+        bl = Bluetooth()
         
 
-    elif mode == "1":
+    elif mode == 1:
         log.info("Mode 1: Self-testing mode.")
         # TODO: You can write your code to test specific function.
-        bl = Bluetooth(bt_port)
+        bl = Bluetooth()
         maze = Maze(maze_file)
-        point = ScoreboardServer(team_name, server_url)
-        bl.bridge.send('x') #stop initially
-        time.sleep(2)
-        print('wait 1 second, please put it to start')
-        start = 'q'
-        while start=='q':
-            start = input("key to start")
-        point = ScoreboardServer('WED2', SERVER_URL)
-
+        # point = ScoreboardServer(team_name, server_url)
         
-        now_pos = maze.get_start_point()
-        nodelist = maze.strategy(now_pos)[::1]
-        nodelist.extend(maze.strategy(nodelist[-1])[1::1])
-        nodelist.reverse()
-        # print(len(nodelist))
-        nodelist.pop()
-        next_pos = nodelist.pop()
-        car_dir = now_pos.get_direction(next_pos)
-        bl.bridge.send('b')
-        time.sleep(0.5)
-
-        # loop of 
-        threading.Thread(target=background_listener, args=(bl.bridge,point,maze,nodelist), daemon=True).start()
-        
+        threading.Thread(target=background_listener, args=(bl.bridge,point,maze), daemon=True).start()
         try:
             while True:
                 user_msg = input("You: ")
@@ -209,7 +229,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                 if user_msg: bl.bridge.send(user_msg)
         except (KeyboardInterrupt, EOFError):
             pass
-    elif mode == "2":
+    elif mode == 2:
         log.info("Mode 2: Self-testing mode.")
         # Text Debug, Use keyboard send car_msg
         maze = Maze(maze_file)
@@ -301,7 +321,8 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         sys.exit(1)
 
 
-if __name__ == "__main__":
-    args = parse_args()
-    main(**vars(args))
+# if __name__ == "__main__":
+#     args = parse_args()
+#     main(**vars(args))
 
+main(1,'COM6', 'WED2', SERVER_URL,MAZE_FILE)
