@@ -81,6 +81,7 @@ def background_listener(bridge,point,maze):
     cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
     bridge.send(cmd)
     endend = False
+    stop=False
     while True:
         byte = bridge.ser.read(1)
 
