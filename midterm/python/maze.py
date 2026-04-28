@@ -284,6 +284,8 @@ class Maze:
             if(i==7): print(lens)
             if (lens<best):
                 result = path
+                best = lens
+
 
         # print(f"Total score: {total_score}")        
         return result
@@ -295,6 +297,7 @@ class Maze:
             # if(i==7): print(lens)
             if (lens<best):
                 result = path
+                best = lens
 
         # print(f"Total score: {total_score}")        
         return result
@@ -326,7 +329,7 @@ class Maze:
 
 m = Maze("data/big_maze_114.csv")
 # m= Maze("data/medium_maze.csv")
-# nodelist = m.testBFS2(1,12)
+nodelist = m.testBFS2(1,12)
 nodelist=m.strategy(m.node_dict[25])
 # # nodelist=m.strategy(m.nodes[24])
 acts = m.getActions(nodelist)
@@ -338,13 +341,13 @@ for node in nodelist:
 # print(nodelist)
 
 
-nodelist=m.strategy3(m.node_dict[25])
+nodelist2=m.strategy3(m.node_dict[25])
 # # nodelist=m.strategy(m.nodes[24])
-acts = m.getActions(nodelist)
+acts = m.getActions(nodelist2)
 print(f"min length:{len(acts)}")
 
 print(f'route:{m.actions_to_str(acts)}')
-for node in nodelist:
+for node in nodelist2:
     print(f'node {int(node.get_index())}')
 # print(nodelist)
 
