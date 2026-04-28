@@ -37,7 +37,7 @@ MAZE_FILE = "data/medium_maze.csv"
 BT_PORT = ""
 
 
-PORT = 'COM4'
+PORT = 'COM6'
 EXPECTED_NAME = 'HM10_Car2'
 
 def background_listener(bridge,point,maze):
@@ -59,11 +59,11 @@ def background_listener(bridge,point,maze):
     point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
     
     now_pos = maze.get_start_point()
-    nodelist = maze.strategy(now_pos)[::1]
-    nodelist.extend(maze.strategy(nodelist[-1])[1::1])
-    nodelist.extend(maze.strategy(nodelist[-1])[1::1])
-    nodelist.extend(maze.strategy(nodelist[-1])[1::1])
-    nodelist.extend(maze.strategy(nodelist[-1])[1::1])
+    nodelist = maze.strategy3(now_pos)[::1]
+    nodelist.extend(maze.strategy3(nodelist[-1])[1::1])
+    nodelist.extend(maze.strategy3(nodelist[-1])[1::1])
+    nodelist.extend(maze.strategy3(nodelist[-1])[1::1])
+    nodelist.extend(maze.strategy3(nodelist[-1])[1::1])
 
     nodelist.reverse()
     print(len(nodelist))
@@ -253,7 +253,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         time.sleep(1)
         print('wait 1 second, please put it to start')
         now_pos = maze.get_start_point()
-        nodelist = maze.strategy(now_pos)[::-1]
+        nodelist = maze.strategy3(now_pos)[::-1]
         nodelist.pop()
         next_pos = nodelist.pop()
         car_dir = now_pos.get_direction(next_pos)
@@ -333,4 +333,4 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
 #     args = parse_args()
 #     main(**vars(args))
 
-main("1",'COM4', 'WED2', SERVER_URL,MAZE_FILE)
+main("1",'COM6', 'WED2', SERVER_URL,MAZE_FILE)

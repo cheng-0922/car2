@@ -273,7 +273,7 @@ class Maze:
             visited_treasure.add(best_target)
         
         # result.extend(self.BFS_2(current,current))
-        print(f"Total score: {total_score}")        
+        # print(f"Total score: {total_score}")        
         return result
     def strategy(self, node:Node):
         best = float('inf')
@@ -327,49 +327,49 @@ class Maze:
 
 
 
-m = Maze("data/big_maze_114.csv")
-# m= Maze("data/medium_maze.csv")
-nodelist = m.testBFS2(1,12)
-nodelist=m.strategy(m.node_dict[25])
-# # nodelist=m.strategy(m.nodes[24])
-acts = m.getActions(nodelist)
-print(f"min length:{len(acts)}")
+# m = Maze("data/big_maze_114.csv")
+# # m= Maze("data/medium_maze.csv")
+# nodelist = m.testBFS2(1,12)
+# nodelist=m.strategy(m.node_dict[25])
+# # # nodelist=m.strategy(m.nodes[24])
+# acts = m.getActions(nodelist)
+# print(f"min length:{len(acts)}")
 
-print(f'route:{m.actions_to_str(acts)}')
-for node in nodelist:
-    print(f'node {int(node.get_index())}')
-# print(nodelist)
+# print(f'route:{m.actions_to_str(acts)}')
+# for node in nodelist:
+#     print(f'node {int(node.get_index())}')
+# # print(nodelist)
 
 
-nodelist2=m.strategy3(m.node_dict[25])
-# # nodelist=m.strategy(m.nodes[24])
-acts = m.getActions(nodelist2)
-print(f"min length:{len(acts)}")
+# nodelist2=m.strategy3(m.node_dict[25])
+# # # nodelist=m.strategy(m.nodes[24])
+# acts = m.getActions(nodelist2)
+# print(f"min length:{len(acts)}")
 
-print(f'route:{m.actions_to_str(acts)}')
-for node in nodelist2:
-    print(f'node {int(node.get_index())}')
+# print(f'route:{m.actions_to_str(acts)}')
+# for node in nodelist2:
+#     print(f'node {int(node.get_index())}')
 # print(nodelist)
 
 
 
 # acts = m.getActions(nodelist)
-point_dict = dict()
-route_dict = dict()
-avg_dict = dict()
-for dist in m.nodes:
-    if dist.get_index() == 25: continue
-    if len(dist.get_successors())==1 :
-        nl = m.BFS_2(m.nodes[24], dist)
-        route_dict[int(dist.get_index())]= len(nl)-1
-        point_dict[int(dist.get_index())]= m.point(m.nodes[24],dist)
-        avg_dict [int(dist.get_index())]=  (m.point(m.nodes[24],dist)) /(len(nl)-1) 
+# point_dict = dict()
+# route_dict = dict()
+# avg_dict = dict()
+# for dist in m.nodes:
+#     if dist.get_index() == 25: continue
+#     if len(dist.get_successors())==1 :
+#         nl = m.BFS_2(m.nodes[24], dist)
+#         route_dict[int(dist.get_index())]= len(nl)-1
+#         point_dict[int(dist.get_index())]= m.point(m.nodes[24],dist)
+#         avg_dict [int(dist.get_index())]=  (m.point(m.nodes[24],dist)) /(len(nl)-1) 
 
 
-print(point_dict)
-print(route_dict)
-print(avg_dict)
-# for node in nodelist[::1]:
+# print(point_dict)
+# print(route_dict)
+# print(avg_dict)
+# # for node in nodelist[::1]:
 #     print(int(node.get_index()))
 #     nodelist.pop()
 
