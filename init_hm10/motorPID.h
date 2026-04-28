@@ -66,7 +66,7 @@ void back(void(*f)()){
   int r2 = analogRead(analogPin2);
   int r3 = analogRead(analogPin1);
 
-  MotorWriting(150, -170);
+  MotorWriting(140, -150);
   delay(400);
   while(true){
       int l3 = analogRead(analogPin5);
@@ -76,7 +76,7 @@ void back(void(*f)()){
       int r3 = analogRead(analogPin1);
       if((l3 >=threshold) || (l2 >=threshold) || (m >=threshold_m) || (r2 >=threshold) || (r3 >=threshold))
         break;
-      MotorWriting(80, -80);
+      MotorWriting(70, -70);
       delay(1);
   }
 
@@ -121,7 +121,7 @@ void right(){
   //     if(!((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)))
   //       break;
   //   }
-  MotorWriting(180, -20); 
+  MotorWriting(180, -30); 
   delay(300);
   while(true){
       int l3 = analogRead(analogPin5);
@@ -150,7 +150,7 @@ void left(){
   //       break;
   //   }
   
-  MotorWriting(-20,180); 
+  MotorWriting(-30,180); 
   delay(300);
   while(true){
       int l3 = analogRead(analogPin5);
@@ -201,7 +201,7 @@ char Tracking(char cmd, void(*f)()) {
   double Tpr=stady[0];
   double Tpl=stady[1];
   double error = (l3*(-w1) + l2*(-w2) + r2*w3 + r3*w4)/(l3 + l2 + m + r2 + r3);
-  double Kd=20;           // 參數，手動調整
+  double Kd=18;           // 參數，手動調整
   static double lastError=0;    // 前次偏移誤差
   double dError = error - lastError;
   double powerCorrection = Kp*error + Kd*dError;

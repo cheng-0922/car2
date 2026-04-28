@@ -153,7 +153,7 @@ def background_listener(bridge,point,maze):
 
             elif car_msg == 'w':
                 print(car_msg)
-        time.sleep(0.001)
+        # time.sleep(0.0001)
 
             
                 
