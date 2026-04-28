@@ -37,7 +37,7 @@ MAZE_FILE = "data/medium_maze.csv"
 BT_PORT = ""
 
 
-PORT = 'COM6'
+PORT = 'COM4'
 EXPECTED_NAME = 'HM10_Car2'
 
 def background_listener(bridge,point,maze):
@@ -293,4 +293,4 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
 #     args = parse_args()
 #     main(**vars(args))
 
-main("1",'COM6', 'WED2', SERVER_URL,MAZE_FILE)
+main("1",'COM4', 'WED2', SERVER_URL,MAZE_FILE)

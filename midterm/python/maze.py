@@ -298,19 +298,17 @@ def checkstates(m:Maze, start:int,  file = FILE_MAZE):
     for node in nodelist:
         print(f'node {int(node.get_index())}')
 
-def get_dict(m:Maze):
+def get_dict(m:Maze, start:int):
     point_dict = dict()
     route_dict = dict()
     avg_dict = dict()
     for dist in m.nodes:
-        if dist.get_index() == 25: continue
+        if dist.get_index() == start: continue
         if len(dist.get_successors())==1 :
-            nl = m.BFS_2(m.nodes[24], dist)
+            nl = m.BFS_2(m.node_dict[start], dist)
             route_dict[int(dist.get_index())]= len(nl)-1
-            point_dict[int(dist.get_index())]= m.point(m.nodes[24],dist)
-            avg_dict [int(dist.get_index())]=  (m.point(m.nodes[24],dist)) /(len(nl)-1) 
-
-
+            point_dict[int(dist.get_index())]= m.point(m.node_dict[start],dist)
+            avg_dict [int(dist.get_index())]=  (m.point(m.node_dict[start],dist)) /(len(nl)-1) 
     print(point_dict)
     print(route_dict)
     print(avg_dict)
