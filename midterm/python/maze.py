@@ -175,7 +175,6 @@ class Maze:
 
     def actions_to_str(self, actions):
         # cmds should be a string sequence like "fbrl....", use it as the input of BFS checklist #1
-        # cmd = "fbrls"
         cmd = "wsdax"
         cmds = ""
         for action in actions:
@@ -183,40 +182,6 @@ class Maze:
         log.info(cmds)
         cmds += 'sx'
         return cmds
-    
-    # # strategy for medium_maze
-    # def strategy(self, node: Node):
-    #     result = [node]
-    #     start = node
-    #     # result.extend(self.BFS_2(start,self.node_dict[7])[1:])
-    #     # start=self.node_dict[7]
-    #     for dist in self.nodes[::1]:
-    #         if (not dist in result )and len(dist.get_successors())==1:
-    #             result.extend(self.BFS_2(start,dist)[1:])
-    #             # new_list = self.BFS_2(start,dist)
-    #             # if new_list: result.append(self.BFS_2(start,dist))
-    #             start = dist
-    #     return result
-
-    # # testing strategy 1
-    # def strategy(self, node: Node):
-    #     result = [node]
-    #     start = node
-    #     # result.extend(self.BFS_2(start,self.node_dict[7])[1:])
-    #     # start=self.node_dict[7]
-    #     list_treasure = [nodes for nodes in self.nodes if len(nodes.get_successors())==1 and (not nodes in result)]
-    #     while(list_treasure):
-    #         candidate = []
-    #         for target in list_treasure:
-    #             if (not target in result)and len(target.get_successors())==1:
-    #                 candidate.append(target)
-    #                 self.point(start, target)
-    #                 result.extend(self.BFS_2(start,target)[1:])
-    #                 # new_list = self.BFS_2(start,dist)
-    #                 # if new_list: result.append(self.BFS_2(start,dist))
-    #                 start = target
-    #                 list_treasure.remove(target)
-    #     return result
 
     # testing strategy 2
     def strategy_i(self, node: Node, max_step):
@@ -271,16 +236,14 @@ class Maze:
             total_score += self.point(current, best_target)*10
             current = best_target
             visited_treasure.add(best_target)
-        
-        # result.extend(self.BFS_2(current,current))
-        # print(f"Total score: {total_score}")        
+     
         return result
     def strategy(self, node:Node):
         best = float('inf')
         for i in range(20):
             path = self.strategy_i(node, i)   # Node list
             actions = self.getActions(path)   # Action list
-            lens = sum(1 for a in actions if a == 'a' or a == 'd')
+            lens = sum(1 for a in self.actions_to_str(actions) if a == 'a' or a == 'd')
             if(i==7): print(lens)
             if (lens<best):
                 result = path
@@ -294,12 +257,11 @@ class Maze:
         for i in range(20):
             path= self.strategy_i(node, i) 
             lens = len(path)
-            # if(i==7): print(lens)
+
             if (lens<best):
                 result = path
                 best = lens
-
-        # print(f"Total score: {total_score}")        
+   
         return result
 
 
@@ -322,61 +284,33 @@ class Maze:
             node_prev = node
         return abs(ns)+abs(ew)
         
-
-
-
-
-
-# m = Maze("data/big_maze_114.csv")
-# # m= Maze("data/medium_maze.csv")
-# nodelist = m.testBFS2(1,12)
-# nodelist=m.strategy(m.node_dict[25])
-# # # nodelist=m.strategy(m.nodes[24])
-# acts = m.getActions(nodelist)
-# print(f"min length:{len(acts)}")
-
-# print(f'route:{m.actions_to_str(acts)}')
-# for node in nodelist:
-#     print(f'node {int(node.get_index())}')
-# # print(nodelist)
-
-
-# nodelist2=m.strategy3(m.node_dict[25])
-# # # nodelist=m.strategy(m.nodes[24])
-# acts = m.getActions(nodelist2)
-# print(f"min length:{len(acts)}")
-
-# print(f'route:{m.actions_to_str(acts)}')
-# for node in nodelist2:
-#     print(f'node {int(node.get_index())}')
-# print(nodelist)
-
-
-
-# acts = m.getActions(nodelist)
-# point_dict = dict()
-# route_dict = dict()
-# avg_dict = dict()
-# for dist in m.nodes:
-#     if dist.get_index() == 25: continue
-#     if len(dist.get_successors())==1 :
-#         nl = m.BFS_2(m.nodes[24], dist)
-#         route_dict[int(dist.get_index())]= len(nl)-1
-#         point_dict[int(dist.get_index())]= m.point(m.nodes[24],dist)
-#         avg_dict [int(dist.get_index())]=  (m.point(m.nodes[24],dist)) /(len(nl)-1) 
-
-
-# print(point_dict)
-# print(route_dict)
-# print(avg_dict)
-# # for node in nodelist[::1]:
-#     print(int(node.get_index()))
-#     nodelist.pop()
-
     
-# print(f'route:{m.actions_to_str(acts)}')
-# for node in nodelist:
-#     print(node.get_index())
-# for nodelist in m.strategy(m.nodes[0]):
-#     acts = m.getActions(nodelist)
-#     print(f'route:{m.actions_to_str(acts)}')
+
+FILE_MAZE="data/big_maze_114.csv"
+def checkstates(m:Maze, start:int,  file = FILE_MAZE):
+    m = Maze(file)
+    nodelist=m.strategy(m.node_dict[start])
+    acts = m.getActions(nodelist)
+    print(f"min length:{len(acts)}")
+    print(sum([1 for i in m.actions_to_str(acts) if i == 'w']))
+
+    print(f'route:{m.actions_to_str(acts)}')
+    for node in nodelist:
+        print(f'node {int(node.get_index())}')
+
+def get_dict(m:Maze):
+    point_dict = dict()
+    route_dict = dict()
+    avg_dict = dict()
+    for dist in m.nodes:
+        if dist.get_index() == 25: continue
+        if len(dist.get_successors())==1 :
+            nl = m.BFS_2(m.nodes[24], dist)
+            route_dict[int(dist.get_index())]= len(nl)-1
+            point_dict[int(dist.get_index())]= m.point(m.nodes[24],dist)
+            avg_dict [int(dist.get_index())]=  (m.point(m.nodes[24],dist)) /(len(nl)-1) 
+
+
+    print(point_dict)
+    print(route_dict)
+    print(avg_dict)

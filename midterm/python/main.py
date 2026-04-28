@@ -220,6 +220,17 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         log.info("Mode 0: For treasure-hunting")
         # TODO : for treasure-hunting, which encourages you to hunt as many scores as possible
         bl = Bluetooth()
+        maze = Maze(maze_file)
+        # point = ScoreboardServer(team_name, server_url)
+        
+        threading.Thread(target=background_listener, args=(bl.bridge,point,maze), daemon=True).start()
+        try:
+            while True:
+                user_msg = input("You: ")
+                if user_msg.lower() in ['exit', 'quit']: break
+                if user_msg: bl.bridge.send(user_msg)
+        except (KeyboardInterrupt, EOFError):
+            pass
         
 
     elif mode == "1":
@@ -269,58 +280,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         try:
             while True:
                 car_msg = input('car_msg?')
-                if car_msg:
-                    print(f"\r[HM10]: {car_msg}\n", end="")
-                    if(len(car_msg)>2):
-                        point.add_UID(car_msg)
-                    elif(car_msg=='n'):
-                        now_pos=next_pos
-                        print(f'{now_pos.get_index()}|{next_pos.get_index}|{maze.getAction(car_dir, now_pos, next_pos)}')
-                        if len(nodelist)>0: next_pos= nodelist.pop()
-                        else : print("end")
-                        cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
 
-                        print(cmd)
-                    elif(car_msg=='d'):
-                        match car_dir:
-                            case 1:
-                                car_dir = 4
-                            case 2:
-                                car_dir = 3
-                            case 3:
-                                car_dir = 1
-                            case 4:
-                                car_dir = 2
-                            case _:
-                                pass
-                    elif(car_msg=='a'):
-                        match car_dir:
-                            case 1:
-                                car_dir = 3
-                            case 2:
-                                car_dir = 4
-                            case 3:
-                                car_dir = 2
-                            case 4:
-                                car_dir = 1
-                            case _:
-                                pass
-                    elif(car_msg=='s'):
-                        match car_dir:
-                            case 1:
-                                car_dir = 2
-                            case 2:
-                                car_dir = 1
-                            case 3:
-                                car_dir = 4
-                            case 4:
-                                car_dir = 3
-                            case _:
-                                pass
-                else:   
-                    user_msg = input("You: ")
-                    if user_msg.lower() in ['exit', 'quit']: break
-                    if user_msg: bl.bridge.send(user_msg)
         except (KeyboardInterrupt, EOFError):
             pass
 
