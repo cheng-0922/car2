@@ -37,7 +37,7 @@ void setup() {
 
   // 1. Automatic Baud Rate Detection
   for (int i = 0; i < 9; i++) {
-    // Serial.print("Testing baud rate: ");
+    // Serial.write("Testing baud rate: ");
     // Serial.println(baudRates[i]);
 
     Serial3.begin(baudRates[i]);
@@ -46,7 +46,7 @@ void setup() {
 
     // 2. Force Disconnection
     // Sending "AT" while connected forces the module to disconnect [2].
-    Serial3.print("AT");
+    Serial3.write("AT");
 
     if (waitForResponse("OK", 800)) {
       // Serial.println("HM-10 detected and ready.");
@@ -69,7 +69,7 @@ void setup() {
   // delay(500);
 
   // // 4. Set Custom Name via Macro
-  // // Serial.print("Setting name to: ");
+  // // Serial.write("Setting name to: ");
   // // Serial.println(CUSTOM_NAME);
   // String nameCmd = "AT+NAME" + String(CUSTOM_NAME);
   // sendATCommand(nameCmd.c_str());  // Max length is 12
@@ -113,10 +113,10 @@ void loop() {
 
   if (Serial3.available()) {
     // control(Serial3.read());
-    // Serial3.print(control('0'));
+    // Serial3.write(control('0'));
     cmd = Serial3.read();
     if (cmd!='b') {
-    Serial3.print(cmd);
+    Serial3.write(cmd);
     delay(1);
       
     }
@@ -132,20 +132,20 @@ void loop() {
     int r2 = analogRead(analogPin2);
     int r3 = analogRead(analogPin1);
     MotorWriting(0, 0);
-    Serial3.print('|');
-    Serial3.print(l3);
-    Serial3.print('|');
+    Serial3.write('|');
+    Serial3.write(l3);
+    Serial3.write('|');
 
-    Serial3.print(l2);
-    Serial3.print('|');
+    Serial3.write(l2);
+    Serial3.write('|');
 
-    Serial3.print(m);
-    Serial3.print('|');
+    Serial3.write(m);
+    Serial3.write('|');
 
-    Serial3.print(r2);
-    Serial3.print('|');
+    Serial3.write(r2);
+    Serial3.write('|');
 
-    Serial3.print(r3);
+    Serial3.write(r3);
     delay(2000);
   }
   else if (cmd=='m'){
@@ -173,11 +173,11 @@ void loop() {
   //       if (c == '\r' || c == '\n') {
   //         if (inputBuffer.length() > 0) {
   //           // Send the clean string to the HM-10
-  //           Serial3.print(inputBuffer);
+  //           Serial3.write(inputBuffer);
 
   //           // Debug: Show what was actually sent
-  //           Serial.print("\n[Sent to HM-10: ");
-  //           Serial.print(inputBuffer);
+  //           Serial.write("\n[Sent to HM-10: ");
+  //           Serial.write(inputBuffer);
   //           Serial.println("]");
 
   //           inputBuffer = ""; // Clear buffer for next command
@@ -193,7 +193,7 @@ void loop() {
  * Helper to send AT commands (Uppercase, no \r or \n) [6]
  */
 void sendATCommand(const char *command) {
-  Serial3.print(command);
+  Serial3.write(command);
   waitForResponse("", 1000);
 }
 
@@ -205,7 +205,7 @@ bool waitForResponse(const char *expected, unsigned long timeout) {
   Serial3.setTimeout(timeout);
   String response = Serial3.readString();
   if (response.length() > 0) {
-    Serial.print("HM10 Response: ");
+    Serial.write("HM10 Response: ");
     Serial.println(response);
   }
   return (response.indexOf(expected) != -1);
@@ -234,26 +234,27 @@ void read() {
 void PICC_DumpDetails(Print &output, MFRC522::Uid *uid  ///< Pointer to Uid struct returned from a successful PICC_Select().
 ) {
   // UID
-  // output.print(F("Card UID:"));
-  uint32_t value = 0;
+  // output.write(F("Card UID:"));
+//   uint32_t value = 0;
 
-  for (byte i = 0; i < 4; i++) {
-    value = (value << 8) | uid->uidByte[i];
-  }
+//   for (byte i = 0; i < 4; i++) {
+//     value = (value << 8) | uid->uidByte[i];
+//   }
 
-// 以 HEX 輸出（或 DEC 都可以）
-  output.println(value, HEX);
-  output.println();
-
+// // 以 HEX 輸出（或 DEC 都可以）
+//   output.println(value, HEX);
+//   output.println();
+output.write(0xAA);                   // header
+output.write(uid->uidByte, 4);  
   // SAK
-  // output.print(F("Card SAK: "));
+  // output.write(F("Card SAK: "));
   // if(uid->sak < 0x10)
-  // 	output.print(F("0"));
+  // 	output.write(F("0"));
   // output.println(uid->sak, HEX);
 
   // // (suggested) PICC type
   // MFRC522::PICC_Type piccType = mfrc522->PICC_GetType(uid->sak);
-  // output.print(F("PICC type: "));
+  // output.write(F("PICC type: "));
   // output.println(mfrc522->PICC_GetTypeName(piccType));
 }  // End PICC_DumpDetailsToSerial()
 

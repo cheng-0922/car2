@@ -4,8 +4,8 @@ import os
 import sys
 import time
 
-import numpy as np
-import pandas
+# import numpy as np
+# import pandas
 # from BTinterface import BTInterface
 from maze import Action, Maze
 from score import ScoreboardServer, ScoreboardFake
@@ -32,10 +32,12 @@ log = logging.getLogger(__name__)
 TEAM_NAME = "TEAM2"
 SERVER_URL = "http://140.112.175.18"
 MAZE_FILE = "data/medium_maze.csv"
+# MAZE_FILE = "data/big_maze_114.csv"
+
 BT_PORT = ""
 
 
-PORT = 'COM6'
+PORT = 'COM4'
 EXPECTED_NAME = 'HM10_Car2'
 
 def background_listener(bridge,point,maze):
@@ -80,77 +82,82 @@ def background_listener(bridge,point,maze):
     bridge.send(cmd)
     endend = False
     while True:
-        car_msg = bridge.listen()
-        if car_msg:
-            print(f"\r[HM10]: {car_msg}\n", end="")
-            stop = False
-            # if (car_msg=='b') :
-            #     now_pos=next_pos
-            #     if len(nodelist)>0: next_pos= nodelist.pop()
-            #     else : bridge.send('w')
-            #     cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
+        byte = bridge.ser.read(1)
 
-                # bridge.send(cmd)
-            if(car_msg=='n'):
-                now_pos=next_pos
-                if len(nodelist)>0: 
-                    next_pos= nodelist.pop()
-                    cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
-                else : 
-                    if(stop) :bridge.send('x')
+        if not byte:
+            continue
+
+        # 🔹 UID 封包
+        if byte == b'\xAA':
+            data = bridge.ser.read(4)
+
+            if len(data) == 4:
+                hex_str = data.hex().upper()
+                print(f"[UID] {hex_str}")
+                point.add_UID(hex_str)
+
+        # 🔹 控制訊號（字元）
+        else:
+            car_msg = byte.decode(errors='ignore')
+
+            # print(f"[CMD] {car_msg}")
+
+            if car_msg == 'n':
+                now_pos = next_pos
+                if len(nodelist) > 0:
+                    next_pos = nodelist.pop()
+                    cmd = cmds[maze.getAction(car_dir, now_pos, next_pos) - 1]
+                else:
+                    if stop:
+                        bridge.send('x')
                     stop = True
-                    
-                if(maze.getAction(car_dir, now_pos, next_pos)):
-                    cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
-                else : 
-                    if(endend):
-                        time.sleep(1) 
+
+                if maze.getAction(car_dir, now_pos, next_pos):
+                    cmd = cmds[maze.getAction(car_dir, now_pos, next_pos) - 1]
+                else:
+                    if endend:
+                        time.sleep(1)
                         cmd = 'x'
-                    else :
+                    else:
                         cmd = 's'
                         endend = True
-                
 
                 bridge.send(cmd)
-            elif(car_msg=='d'):
+                print(car_msg)
+
+            elif car_msg == 'd':
                 match car_dir:
-                    case 1:
-                        car_dir = 4
-                    case 2:
-                        car_dir = 3
-                    case 3:
-                        car_dir = 1
-                    case 4:
-                        car_dir = 2
-                    case _:
-                        pass
-            elif(car_msg=='a'):
+                    case 1: car_dir = 4
+                    case 2: car_dir = 3
+                    case 3: car_dir = 1
+                    case 4: car_dir = 2
+                print(car_msg)
+                
+
+            elif car_msg == 'a':
                 match car_dir:
-                    case 1:
-                        car_dir = 3
-                    case 2:
-                        car_dir = 4
-                    case 3:
-                        car_dir = 2
-                    case 4:
-                        car_dir = 1
-                    case _:
-                        pass
-            elif(car_msg=='s'):
+                    case 1: car_dir = 3
+                    case 2: car_dir = 4
+                    case 3: car_dir = 2
+                    case 4: car_dir = 1
+                print(car_msg)
+                
+
+            elif car_msg == 's':
                 match car_dir:
-                    case 1:
-                        car_dir = 2
-                    case 2:
-                        car_dir = 1
-                    case 3:
-                        car_dir = 4
-                    case 4:
-                        car_dir = 3
-                    case _:
-                        pass
-            if(len(car_msg)==8):
-                point.add_UID(car_msg)
-        time.sleep(0.1)
+                    case 1: car_dir = 2
+                    case 2: car_dir = 1
+                    case 3: car_dir = 4
+                    case 4: car_dir = 3
+                print(car_msg)
+
+            elif car_msg == 'w':
+                print(car_msg)
+        time.sleep(0.001)
+
+            
+                
+                
 class Bluetooth:     
     def __init__(self):
         self.bridge = HM10ESP32Bridge(port=PORT)
@@ -214,7 +221,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         bl = Bluetooth()
         
 
-    elif mode == 1:
+    elif mode == "1":
         log.info("Mode 1: Self-testing mode.")
         # TODO: You can write your code to test specific function.
         bl = Bluetooth()
@@ -229,7 +236,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                 if user_msg: bl.bridge.send(user_msg)
         except (KeyboardInterrupt, EOFError):
             pass
-    elif mode == 2:
+    elif mode == "2":
         log.info("Mode 2: Self-testing mode.")
         # Text Debug, Use keyboard send car_msg
         maze = Maze(maze_file)
@@ -325,4 +332,4 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
 #     args = parse_args()
 #     main(**vars(args))
 
-main(1,'COM6', 'WED2', SERVER_URL,MAZE_FILE)
+main("1",'COM4', 'WED2', SERVER_URL,MAZE_FILE)

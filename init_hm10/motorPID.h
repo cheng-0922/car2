@@ -66,7 +66,7 @@ void back(void(*f)()){
   int r2 = analogRead(analogPin2);
   int r3 = analogRead(analogPin1);
 
-  MotorWriting(150, -150);
+  MotorWriting(150, -170);
   delay(400);
   while(true){
       int l3 = analogRead(analogPin5);
@@ -121,7 +121,7 @@ void right(){
   //     if(!((l3 >=threshold) && (l2 >=threshold) && (m >=threshold_m) && (r2 >=threshold) && (r3 >=threshold)))
   //       break;
   //   }
-  MotorWriting(180, 0); 
+  MotorWriting(180, -20); 
   delay(300);
   while(true){
       int l3 = analogRead(analogPin5);
@@ -150,7 +150,7 @@ void left(){
   //       break;
   //   }
   
-  MotorWriting(0,180); 
+  MotorWriting(-20,180); 
   delay(300);
   while(true){
       int l3 = analogRead(analogPin5);
@@ -167,7 +167,7 @@ void left(){
 void back_to_line(int to_turn){
   int threshold=50;
   int threshold_m=50;
-  // Serial3.print('o');
+  // Serial3.write('o');
   while(true){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
@@ -193,7 +193,7 @@ char Tracking(char cmd, void(*f)()) {
   double w2= 2;
   double w3= 1;
   double w4= 4;
-  double Kp= 70;
+  double Kp= 60;
 
   static double stady[2] = {250,250};
   // static double stady[2] = {200,178};
@@ -201,7 +201,7 @@ char Tracking(char cmd, void(*f)()) {
   double Tpr=stady[0];
   double Tpl=stady[1];
   double error = (l3*(-w1) + l2*(-w2) + r2*w3 + r3*w4)/(l3 + l2 + m + r2 + r3);
-  double Kd=25;           // 參數，手動調整
+  double Kd=20;           // 參數，手動調整
   static double lastError=0;    // 前次偏移誤差
   double dError = error - lastError;
   double powerCorrection = Kp*error + Kd*dError;
@@ -214,9 +214,9 @@ char Tracking(char cmd, void(*f)()) {
   // }
 
   if(cmd=='m'){
-    Serial3.print(vL);
-    Serial3.print('|');
-    Serial3.print(vR);
+    Serial3.write(vL);
+    Serial3.write('|');
+    Serial3.write(vR);
   }
   
     // 在所有函數外面定義一個全域變數來存最新的指令
@@ -236,26 +236,26 @@ char Tracking(char cmd, void(*f)()) {
     if(cmd!='q'){
       
       if(cmd=='a') {
-        // Serial3.print("left turn");
+        // Serial3.write("left turn");
         left();
-        back_to_line(100);
-        Serial3.print('n');
+        back_to_line(50);
+        Serial3.write('n');
       }
       if(cmd=='d'){
-        // Serial3.print("right turn");
+        // Serial3.write("right turn");
         right();
-        back_to_line(-100);
-        Serial3.print('n');
+        back_to_line(-50);
+        Serial3.write('n');
       }
       if(cmd=='s') {
-        // Serial3.print("right turn");
+        // Serial3.write("right turn");
         back(f);
-        Serial3.print('n');
+        Serial3.write('n');
         // f();
       }
       if(cmd=='w'){
         straight();
-        Serial3.print('n');
+        Serial3.write('n');
       }
       return 'q';
     }
