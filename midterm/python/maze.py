@@ -244,7 +244,6 @@ class Maze:
             path = self.strategy_i(node, i)   # Node list
             actions = self.getActions(path)   # Action list
             lens = sum(1 for a in self.actions_to_str(actions) if a == 'a' or a == 'd')
-            if(i==7): print(lens)
             if (lens<best):
                 result = path
                 best = lens

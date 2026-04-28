@@ -63,29 +63,6 @@ void setup() {
     return;
   }
 
-  // // 3. Restore Factory Defaults
-  // // Serial.println("Restoring factory defaults...");
-  // sendATCommand("AT+RENEW");  // Restores all setup values
-  // delay(500);
-
-  // // 4. Set Custom Name via Macro
-  // // Serial.write("Setting name to: ");
-  // // Serial.println(CUSTOM_NAME);
-  // String nameCmd = "AT+NAME" + String(CUSTOM_NAME);
-  // sendATCommand(nameCmd.c_str());  // Max length is 12
-
-  // // 5. Enable Connection Notifications
-  // // Serial.println("Enabling notifications...");
-  // sendATCommand("AT+NOTI1");  // Notify when link is established/lost
-
-  // // 6. Get the Bluetooth MAC Address
-  // // Serial.println("Querying Bluetooth Address");
-  // sendATCommand("AT+ADDR?");
-
-  // // 7. Restart the module to apply changes
-  // // Serial.println("Restarting module...");
-  // sendATCommand("AT+RESET");  // Restart the module
-  // delay(1000);
   Serial3.begin(9600);  // Now the module would use baudrate 9600
 
   // Serial.println("Initialization Complete.");
@@ -112,13 +89,11 @@ void loop() {
   // 1. Module to PC: Forward HM-10 responses to the Serial Monitor
 
   if (Serial3.available()) {
-    // control(Serial3.read());
-    // Serial3.write(control('0'));
     cmd = Serial3.read();
     if (cmd!='b') {
-    Serial3.write(cmd);
-    delay(1);
-      
+      // start with a small step
+      Serial3.write(cmd);
+      delay(1);
     }
   }
   if(cmd=='r'){
@@ -126,6 +101,7 @@ void loop() {
     read();
   }
   else if (cmd=='k'){
+    // check IR
     int l3 = analogRead(analogPin5);
     int l2 = analogRead(analogPin4);
     int m = analogRead(analogPin3);
@@ -146,47 +122,26 @@ void loop() {
     Serial3.write('|');
 
     Serial3.write(r3);
+    Serial3.write('\n');
     delay(2000);
   }
   else if (cmd=='m'){
-    // MotorWriting(200, 200);
-    Tracking(cmd,(read));
+    // print vL, vR
+    Tracking(cmd);
+    Serial3.write('\n');
   }
-  if(cmd!='x'){
-    // control(Tracking(control('0'), (read)));
-    cmd = Tracking(cmd, (read));
-    if(cmd=='s') read();
-
-  }
-  else{
+  else if (cmd=='x'){
+    // 'x' for halt
     MotorWriting(0,0); 
   }
+  else if(cmd=='o'){
+      MotorWriting(250, 250);
+  }
+  else{
+    cmd = Tracking(cmd);
+    if(cmd=='s') read();
+  }
 
-
-  //   // 2. PC to Module: Read user input and truncate line endings
-  //   if (Serial.available()) {
-  //     static String inputBuffer = "";
-  //     while (Serial.available()) {
-  //       char c = Serial.read();
-
-  //       // Check if the character is a line ending
-  //       if (c == '\r' || c == '\n') {
-  //         if (inputBuffer.length() > 0) {
-  //           // Send the clean string to the HM-10
-  //           Serial3.write(inputBuffer);
-
-  //           // Debug: Show what was actually sent
-  //           Serial.write("\n[Sent to HM-10: ");
-  //           Serial.write(inputBuffer);
-  //           Serial.println("]");
-
-  //           inputBuffer = ""; // Clear buffer for next command
-  //         }
-  //       } else {
-  //         inputBuffer += c; // Add character to buffer
-  //       }
-  //     }
-  //   }
 }
 
 /**
@@ -234,34 +189,8 @@ void read() {
 void PICC_DumpDetails(Print &output, MFRC522::Uid *uid  ///< Pointer to Uid struct returned from a successful PICC_Select().
 ) {
   // UID
-  // output.write(F("Card UID:"));
-//   uint32_t value = 0;
+  output.write(0xAA);                   // header
+  output.write(uid->uidByte, 4);  
 
-//   for (byte i = 0; i < 4; i++) {
-//     value = (value << 8) | uid->uidByte[i];
-//   }
+} 
 
-// // 以 HEX 輸出（或 DEC 都可以）
-//   output.println(value, HEX);
-//   output.println();
-output.write(0xAA);                   // header
-output.write(uid->uidByte, 4);  
-  // SAK
-  // output.write(F("Card SAK: "));
-  // if(uid->sak < 0x10)
-  // 	output.write(F("0"));
-  // output.println(uid->sak, HEX);
-
-  // // (suggested) PICC type
-  // MFRC522::PICC_Type piccType = mfrc522->PICC_GetType(uid->sak);
-  // output.write(F("PICC type: "));
-  // output.println(mfrc522->PICC_GetTypeName(piccType));
-}  // End PICC_DumpDetailsToSerial()
-
-char control(char _cmd){
-  
-  static char cmd = 'x';
-  if(_cmd=='0') return cmd;
-  cmd=_cmd;
-  return cmd;
-}

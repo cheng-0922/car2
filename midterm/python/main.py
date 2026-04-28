@@ -209,7 +209,7 @@ def parse_args():
 
 
 def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: str):
-    
+    PORT = bt_port
     point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
 
     ### Bluetooth connection haven't been implemented yet, we will update ASAP ###
@@ -289,8 +289,8 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         sys.exit(1)
 
 
-# if __name__ == "__main__":
-#     args = parse_args()
-#     main(**vars(args))
+if __name__ == "__main__":
+    args = parse_args()
+    main(**vars(args))
 
-main("1",'COM4', 'WED2', SERVER_URL,MAZE_FILE)
+# main("1",'COM4', 'WED2', SERVER_URL,MAZE_FILE)
