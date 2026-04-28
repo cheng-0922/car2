@@ -219,7 +219,7 @@ class Maze:
     #     return result
 
     # testing strategy 2
-    def strategy(self, node: Node):
+    def strategy_i(self, node: Node, max_step):
         result = [node]
         current = node
         
@@ -241,7 +241,7 @@ class Maze:
                 if not path: continue
                 
                 steps = len(path) - 1
-                if steps <= 5:
+                if steps <= max_step:
                     score = self.point(node, target) * 10
                     cp = score / steps if steps > 0 else 0
                     if cp > best_cp:
@@ -275,6 +275,30 @@ class Maze:
         # result.extend(self.BFS_2(current,current))
         print(f"Total score: {total_score}")        
         return result
+    def strategy(self, node:Node):
+        best = float('inf')
+        for i in range(20):
+            path = self.strategy_i(node, i)   # Node list
+            actions = self.getActions(path)   # Action list
+            lens = sum(1 for a in actions if a == 'a' or a == 'd')
+            if(i==7): print(lens)
+            if (lens<best):
+                result = path
+
+        # print(f"Total score: {total_score}")        
+        return result
+    def strategy3(self, node:Node):
+        best = float('inf')
+        for i in range(20):
+            path= self.strategy_i(node, i) 
+            lens = len(path)
+            # if(i==7): print(lens)
+            if (lens<best):
+                result = path
+
+        # print(f"Total score: {total_score}")        
+        return result
+
 
     def strategy_2(self, node_from: Node, node_to: Node):
         return self.BFS_2(node_from, node_to)
@@ -300,37 +324,48 @@ class Maze:
 
 
 
-# # m = Maze("data/big_maze_114.csv")
+m = Maze("data/big_maze_114.csv")
 # m= Maze("data/medium_maze.csv")
-# # nodelist = m.testBFS2(1,12)
-# nodelist=m.strategy(m.node_dict[1])
-# # # nodelist=m.strategy(m.nodes[24])
-# acts = m.getActions(nodelist)
+# nodelist = m.testBFS2(1,12)
+nodelist=m.strategy(m.node_dict[25])
+# # nodelist=m.strategy(m.nodes[24])
+acts = m.getActions(nodelist)
+print(f"min length:{len(acts)}")
 
-# print(f'route:{m.actions_to_str(acts)}')
-# for node in nodelist:
-#     print(node.get_index())
+print(f'route:{m.actions_to_str(acts)}')
+for node in nodelist:
+    print(f'node {int(node.get_index())}')
+# print(nodelist)
+
+
+nodelist=m.strategy3(m.node_dict[25])
+# # nodelist=m.strategy(m.nodes[24])
+acts = m.getActions(nodelist)
+print(f"min length:{len(acts)}")
+
+print(f'route:{m.actions_to_str(acts)}')
+for node in nodelist:
+    print(f'node {int(node.get_index())}')
 # print(nodelist)
 
 
 
-
 # acts = m.getActions(nodelist)
-# point_dict = dict()
-# route_dict = dict()
-# avg_dict = dict()
-# for dist in m.nodes:
-#     if dist.get_index() == 25: continue
-#     if len(dist.get_successors())==1 :
-#         nl = m.BFS_2(m.nodes[24], dist)
-#         route_dict[int(dist.get_index())]= len(nl)-1
-#         point_dict[int(dist.get_index())]= m.point(m.nodes[24],dist)
-#         avg_dict [int(dist.get_index())]=  (m.point(m.nodes[24],dist)) /(len(nl)-1) 
+point_dict = dict()
+route_dict = dict()
+avg_dict = dict()
+for dist in m.nodes:
+    if dist.get_index() == 25: continue
+    if len(dist.get_successors())==1 :
+        nl = m.BFS_2(m.nodes[24], dist)
+        route_dict[int(dist.get_index())]= len(nl)-1
+        point_dict[int(dist.get_index())]= m.point(m.nodes[24],dist)
+        avg_dict [int(dist.get_index())]=  (m.point(m.nodes[24],dist)) /(len(nl)-1) 
 
 
-# print(point_dict)
-# print(route_dict)
-# print(avg_dict)
+print(point_dict)
+print(route_dict)
+print(avg_dict)
 # for node in nodelist[::1]:
 #     print(int(node.get_index()))
 #     nodelist.pop()
