@@ -239,10 +239,10 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         
         now_pos = maze.get_start_point()
         nodelist = maze.strategy(now_pos)        
-        # nodelist.extend(maze.strategy(nodelist[-1])[1::1])
-        # nodelist.extend(maze.strategy(nodelist[-1])[1::1])
-        # nodelist.extend(maze.strategy(nodelist[-1])[1::1])
-        # nodelist.extend(maze.strategy(nodelist[-1])[1::1])
+        nodelist.extend(maze.strategy(nodelist[-1])[1::1])
+        nodelist.extend(maze.strategy(nodelist[-1])[1::1])
+        nodelist.extend(maze.strategy(nodelist[-1])[1::1])
+        nodelist.extend(maze.strategy(nodelist[-1])[1::1])
 
         nodelist.reverse()
         print(len(nodelist))
