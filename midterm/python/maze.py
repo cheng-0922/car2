@@ -179,7 +179,7 @@ class Maze:
         cmds = ""
         for action in actions:
             cmds += cmd[action - 1]
-        log.info(cmds)
+        # log.info(cmds)
         cmds += 'sx'
         return cmds
 

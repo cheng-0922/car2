@@ -162,13 +162,13 @@ char Tracking(char cmd) {
   double w2= 2;
   double w3= 1;
   double w4= 4;
-  double Kp= 60;
+  double Kp= 50;
 
   static double stady[2] = {250,250};
   double Tpr=stady[0];
   double Tpl=stady[1];
   double error = (l3*(-w1) + l2*(-w2) + r2*w3 + r3*w4)/(l3 + l2 + m + r2 + r3);
-  double Kd=18;           // 參數，手動調整
+  double Kd=15;           // 參數，手動調整
   static double lastError=0;    // 前次偏移誤差
   double dError = error - lastError;
   double powerCorrection = Kp*error + Kd*dError;

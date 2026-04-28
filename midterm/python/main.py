@@ -34,39 +34,14 @@ SERVER_URL = "http://140.112.175.18"
 MAZE_FILE = "data/medium_maze.csv"
 # MAZE_FILE = "data/big_maze_114.csv"
 
-BT_PORT = ""
+BT_PORT = 'COM4'
 
 
 PORT = 'COM4'
 EXPECTED_NAME = 'HM10_Car2'
 
-def background_listener(bridge,point,maze):
-    # fin = maze.get_node_dict()[12]
-    # now_pos= maze.get_start_point()
-    # nodelist= maze.strategy_2(now_pos, fin)
-    # next_pos = nodelist[1]
-    # car_dir = now_pos.get_direction(next_pos)
-    # cmds = "wsdax"
-    # cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
-    bridge.send('x') #stop initially
-    time.sleep(2)
-    print('wait 1 second, please put it to start')
-    start = 'q'
-    while start=='q':
-        start = input("key to start")
-    # point = ScoreboardServer('WED2', SERVER_URL)
-
-    point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
-    
+def background_listener(bridge,point,maze, nodelist):
     now_pos = maze.get_start_point()
-    nodelist = maze.strategy(now_pos)[::1]
-    nodelist.extend(maze.strategy(nodelist[-1])[1::1])
-    nodelist.extend(maze.strategy(nodelist[-1])[1::1])
-    nodelist.extend(maze.strategy(nodelist[-1])[1::1])
-    nodelist.extend(maze.strategy(nodelist[-1])[1::1])
-
-    nodelist.reverse()
-    print(len(nodelist))
     
     nodelist.pop()
     next_pos = nodelist.pop()
@@ -160,8 +135,8 @@ def background_listener(bridge,point,maze):
                 
                 
 class Bluetooth:     
-    def __init__(self):
-        self.bridge = HM10ESP32Bridge(port=PORT)
+    def __init__(self, port):
+        self.bridge = HM10ESP32Bridge(port)
         
         # 1. Configuration Check
         current_name = self.bridge.get_hm10_name()
@@ -209,8 +184,8 @@ def parse_args():
 
 
 def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: str):
-    PORT = bt_port
-    point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
+
+    # point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
 
     ### Bluetooth connection haven't been implemented yet, we will update ASAP ###
     # interface = BTInterface(port=bt_port)
@@ -219,11 +194,25 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
     if mode == "0":
         log.info("Mode 0: For treasure-hunting")
         # TODO : for treasure-hunting, which encourages you to hunt as many scores as possible
-        bl = Bluetooth()
+        bl = Bluetooth(bt_port)
         maze = Maze(maze_file)
-        # point = ScoreboardServer(team_name, server_url)
         
-        threading.Thread(target=background_listener, args=(bl.bridge,point,maze), daemon=True).start()
+        bl.bridge.send('x') #stop initially
+        time.sleep(2)
+        print('wait 1 second, please put it to start')
+        start = 'q'
+        while start=='q':
+            start = input("key to start")
+
+        
+        point = ScoreboardServer(team_name, server_url)
+        
+        now_pos = maze.get_start_point()
+        nodelist = maze.strategy(now_pos)[::1]
+
+        nodelist.reverse()
+        print(len(nodelist))
+        threading.Thread(target=background_listener, args=(bl.bridge,point,maze,nodelist), daemon=True).start()
         try:
             while True:
                 user_msg = input("You: ")
@@ -231,16 +220,33 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                 if user_msg: bl.bridge.send(user_msg)
         except (KeyboardInterrupt, EOFError):
             pass
-        
 
     elif mode == "1":
         log.info("Mode 1: Self-testing mode.")
         # TODO: You can write your code to test specific function.
-        bl = Bluetooth()
+        bl = Bluetooth(bt_port)
         maze = Maze(maze_file)
-        # point = ScoreboardServer(team_name, server_url)
+
+        bl.bridge.send('x') #stop initially
+        time.sleep(2)
+        print('wait 1 second, please put it to start')
+        start = 'q'
+        while start=='q':
+            start = input("key to start")
+
+
+        point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
         
-        threading.Thread(target=background_listener, args=(bl.bridge,point,maze), daemon=True).start()
+        now_pos = maze.get_start_point()
+        nodelist = maze.strategy(now_pos)        
+        # nodelist.extend(maze.strategy(nodelist[-1])[1::1])
+        # nodelist.extend(maze.strategy(nodelist[-1])[1::1])
+        # nodelist.extend(maze.strategy(nodelist[-1])[1::1])
+        # nodelist.extend(maze.strategy(nodelist[-1])[1::1])
+
+        nodelist.reverse()
+        print(len(nodelist))
+        threading.Thread(target=background_listener, args=(bl.bridge,point,maze,nodelist), daemon=True).start()
         try:
             while True:
                 user_msg = input("You: ")
@@ -253,41 +259,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         # Text Debug, Use keyboard send car_msg
         maze = Maze(maze_file)
         point = ScoreboardServer(team_name, server_url)
-        # fin = maze.get_node_dict()[12]
-        # now_pos= maze.get_start_point()
-        # nodelist= maze.strategy_2(now_pos, fin)
-        # next_pos = nodelist[1]
-        # car_dir = now_pos.get_direction(next_pos)
-        # cmds = "wsdax"
-        # cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
-        print('x')
-        time.sleep(1)
-        print('wait 1 second, please put it to start')
-        now_pos = maze.get_start_point()
-        nodelist = maze.strategy(now_pos)[::-1]
-        nodelist.pop()
-        next_pos = nodelist.pop()
-        car_dir = now_pos.get_direction(next_pos)
-        # the command when entering second
-        now_pos= next_pos
-        next_pos= nodelist.pop()
-        for i in nodelist:
-            print(i.get_index())
-        print(f'{now_pos.get_index()}|{next_pos.get_index()}|{maze.getAction(car_dir, now_pos, next_pos)}')
-        cmds = "wsdax"
-        cmd = ''+cmds[maze.getAction(car_dir, now_pos, next_pos)- 1]
-        print(cmd)
-        try:
-            while True:
-                car_msg = input('car_msg?')
-
-        except (KeyboardInterrupt, EOFError):
-            pass
-
-    else:
-        log.error("Invalid mode")
-        sys.exit(1)
-
+        
 
 if __name__ == "__main__":
     args = parse_args()
