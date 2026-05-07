@@ -41,7 +41,7 @@ car2/
 ## midterm
 ### python/
 
-main.py: it hasn't been modified.
+main.py: OK
 
 maze.py: OK
 
