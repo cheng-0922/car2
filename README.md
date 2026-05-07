@@ -58,7 +58,9 @@ all are not complete, use init_hm10.ino now.
 this is newest version for arduino conntrol
 
 ## git commands
+```bash
 git push origin main // download from branch "main"
 git add . // automatically add files 
 git commit -m "" // save changes as a version
 git push origin main // upload updates to branch "main"
+```
