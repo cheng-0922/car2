@@ -31,8 +31,8 @@ log = logging.getLogger(__name__)
 # TODO : Fill in the following information
 TEAM_NAME = "TEAM2"
 SERVER_URL = "http://140.112.175.18"
-MAZE_FILE = "data/medium_maze.csv"
-# MAZE_FILE = "data/big_maze_114.csv"
+# MAZE_FILE = "data/medium_maze.csv"
+MAZE_FILE = "data/big_maze_114.csv"
 
 BT_PORT = 'COM4'
 
@@ -58,24 +58,17 @@ def background_listener(bridge,point,maze, nodelist):
     endend = False
     stop=False
     while True:
-        byte = bridge.ser.read(1)
+        car_msg = bridge.listen()
 
-        if not byte:
+        if not car_msg:
             continue
 
         # 🔹 UID 封包
-        if byte == b'\xAA':
-            data = bridge.ser.read(4)
-
-            if len(data) == 4:
-                hex_str = data.hex().upper()
-                print(f"[UID] {hex_str}")
-                point.add_UID(hex_str)
+        if(len(car_msg)==8):
+            point.add_UID(car_msg)
 
         # 🔹 控制訊號（字元）
         else:
-            car_msg = byte.decode(errors='ignore')
-
             # print(f"[CMD] {car_msg}")
 
             if car_msg == 'n':
@@ -100,7 +93,7 @@ def background_listener(bridge,point,maze, nodelist):
 
                 bridge.send(cmd)
                 print(car_msg)
-
+            
             elif car_msg == 'd':
                 match car_dir:
                     case 1: car_dir = 4
@@ -165,8 +158,6 @@ class Bluetooth:
         print(f"✨ Ready! Connected to {EXPECTED_NAME}")
         
 
-        
-    
     print("\nChat closed.")
 
 

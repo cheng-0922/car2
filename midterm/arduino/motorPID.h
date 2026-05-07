@@ -136,7 +136,7 @@ void left(){
 void back_to_line(int to_turn){
   int threshold=50;
   int threshold_m=50;
-  // Serial3.write('o');
+  // Serial3.print('o');
   while(true){
       int l3 = analogRead(analogPin5);
       int l2 = analogRead(analogPin4);
@@ -178,9 +178,9 @@ char Tracking(char cmd) {
   int vL = Tpl + powerCorrection;
 
   if(cmd=='m'){
-    Serial3.write(vL);
-    Serial3.write('|');
-    Serial3.write(vR);
+    Serial3.print(vL);
+    Serial3.print('|');
+    Serial3.print(vR);
   }
   
     // 在所有函數外面定義一個全域變數來存最新的指令
@@ -203,20 +203,20 @@ char Tracking(char cmd) {
       if(cmd=='a') {
         left();
         back_to_line(50);
-        Serial3.write('n');
+        Serial3.print('n');
       }
       if(cmd=='d'){
         right();
         back_to_line(-50);
-        Serial3.write('n');
+        Serial3.print('n');
       }
       if(cmd=='s') {
         back();
-        Serial3.write('n');
+        Serial3.print('n');
       }
       if(cmd=='w'){
         straight();
-        Serial3.write('n');
+        Serial3.print('n');
       }
       return 'q';
     }

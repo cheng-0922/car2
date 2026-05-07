@@ -37,7 +37,7 @@ void setup() {
 
   // 1. Automatic Baud Rate Detection
   for (int i = 0; i < 9; i++) {
-    // Serial.write("Testing baud rate: ");
+    // Serial.print("Testing baud rate: ");
     // Serial.println(baudRates[i]);
 
     Serial3.begin(baudRates[i]);
@@ -46,7 +46,7 @@ void setup() {
 
     // 2. Force Disconnection
     // Sending "AT" while connected forces the module to disconnect [2].
-    Serial3.write("AT");
+    Serial3.print("AT");
 
     if (waitForResponse("OK", 800)) {
       // Serial.println("HM-10 detected and ready.");
@@ -92,7 +92,7 @@ void loop() {
     cmd = Serial3.read();
     if (cmd!='b') {
       // start with a small step
-      Serial3.write(cmd);
+      Serial3.print(cmd);
       delay(1);
     }
   }
@@ -108,27 +108,27 @@ void loop() {
     int r2 = analogRead(analogPin2);
     int r3 = analogRead(analogPin1);
     MotorWriting(0, 0);
-    Serial3.write('|');
-    Serial3.write(l3);
-    Serial3.write('|');
+    Serial3.print('|');
+    Serial3.print(l3);
+    Serial3.print('|');
 
-    Serial3.write(l2);
-    Serial3.write('|');
+    Serial3.print(l2);
+    Serial3.print('|');
 
-    Serial3.write(m);
-    Serial3.write('|');
+    Serial3.print(m);
+    Serial3.print('|');
 
-    Serial3.write(r2);
-    Serial3.write('|');
+    Serial3.print(r2);
+    Serial3.print('|');
 
-    Serial3.write(r3);
-    Serial3.write('\n');
+    Serial3.print(r3);
+    Serial3.print('\n');
     delay(2000);
   }
   else if (cmd=='m'){
     // print vL, vR
     Tracking(cmd);
-    Serial3.write('\n');
+    Serial3.print('\n');
   }
   else if (cmd=='x'){
     // 'x' for halt
@@ -148,7 +148,7 @@ void loop() {
  * Helper to send AT commands (Uppercase, no \r or \n) [6]
  */
 void sendATCommand(const char *command) {
-  Serial3.write(command);
+  Serial3.print(command);
   waitForResponse("", 1000);
 }
 
@@ -160,7 +160,7 @@ bool waitForResponse(const char *expected, unsigned long timeout) {
   Serial3.setTimeout(timeout);
   String response = Serial3.readString();
   if (response.length() > 0) {
-    Serial.write("HM10 Response: ");
+    Serial.print("HM10 Response: ");
     Serial.println(response);
   }
   return (response.indexOf(expected) != -1);
@@ -189,8 +189,8 @@ void read() {
 void PICC_DumpDetails(Print &output, MFRC522::Uid *uid  ///< Pointer to Uid struct returned from a successful PICC_Select().
 ) {
   // UID
-  output.write(0xAA);                   // header
-  output.write(uid->uidByte, 4);  
+  output.print(0xAA);                   // header
+  output.print(uid->uidByte, 4);  
 
 } 
 
