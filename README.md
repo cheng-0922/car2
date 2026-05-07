@@ -1,4 +1,5 @@
 # car2
+```bash
 car2/
  ├── README.md                  # 專案說明文件
  ├── motorPID.h                 # 舊版馬達控制函式
@@ -36,6 +37,7 @@ car2/
  │       ├── node.py            # 定義地圖node class
  │       └── score.py           # 計分程式
  └── CarCarImproveWireless      # 藍芽通訊，第三周課程提供版本
+```
 ## midterm
 ### python/
 
