@@ -55,7 +55,7 @@ score.py: no nead to change
 all are not complete, use init_hm10.ino now.
 
 ## init_hm10
-this is newest version for arduino conntrol
+this is newest version for arduino control
 
 ## git commands
 ```bash
