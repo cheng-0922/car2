@@ -27,7 +27,7 @@ class Node:
 
     def set_successor(self, successor, direction, length=1):
         self.successors.append((successor, Direction(direction), int(length)))
-        print(f"For Node {self.index}, a successor {self.successors[-1]} is set.")
+        # print(f"For Node {self.index}, a successor {self.successors[-1]} is set.")
         return
 
     def get_direction(self, node):
@@ -35,11 +35,11 @@ class Node:
         # For example, if the direction of node from the present node is EAST, then return Direction.EAST = 4
         # However, if node is not adjacent to the present node, print error message and return 0
         for s in self.successors:
-            print(s)
+            # print(s)
             if(node.index==s[0].index):
                 return Direction(s[1])
         
-        print(f"Not a successor of {self.index}")
+        # print(f"Not a successor of {self.index}")
         return 0
 
     def is_successor(self, node):
