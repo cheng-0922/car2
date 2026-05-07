@@ -38,21 +38,3 @@ car2/
              └── hm10_esp32_bridge.py
 
 ```
-## midterm
-### python/
-
-main.py: OK
-
-maze.py: OK
-
-node.py: OK
-
-score.py: no nead to change
-
-
-### arduino/
-all are not complete, use init_hm10.ino now.
-
-## init_hm10
-this is newest version for arduino control
-
