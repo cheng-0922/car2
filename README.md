@@ -1,4 +1,9 @@
 # car2
+
+contributor： 何承憲、林侑葶、李旻諺
+
+### 資料夾架構
+
 ```bash
 car2/
  ├── README.md                   # 專案說明文件
@@ -37,4 +42,36 @@ car2/
              ├── __init__.py
              └── hm10_esp32_bridge.py
 
+```
+
+### 執行方式
+進入`car2\midterm\python\`，於terninal執行 
+```bash
+python main.py [-h] [--maze-file MAZE_FILE] [--bt-port BT_PORT] [--team-name TEAM_NAME]
+               [--server-url SERVER_URL]
+               mode
+```
+
+範例
+
+(比賽時使用)：
+
+`python main.py 0 --maze-file data/big_maze_114.csv --bt-port COM4 `
+
+(測試模式)：
+
+`python main.py 1 --maze-file data/medium_maze.csv --bt-port COM4 --server-url http://140.112.175.18`
+
+
+### branch 說明
+```bash
+PID
+  └── control
+        └── alt          ← 第一個可運作完整版本
+              └── new    ← 節點偵測邏輯改版
+                    └── newmotor     ← 換馬達後調參
+                          └── newnewmotor  ← 最終調參
+                                └── main  ← 整合最終版
+
+BFS  （獨立開發，最終整合進 alt）
 ```
