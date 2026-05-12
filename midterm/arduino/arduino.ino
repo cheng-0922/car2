@@ -189,8 +189,14 @@ void read() {
 void PICC_DumpDetails(Print &output, MFRC522::Uid *uid  ///< Pointer to Uid struct returned from a successful PICC_Select().
 ) {
   // UID
-  output.print(0xAA);                   // header
-  output.print(uid->uidByte, 4);  
+  uint32_t value = 0;
 
+  for (byte i = 0; i < 4; i++) {
+    value = (value << 8) | uid->uidByte[i];
+  }
+
+// 以 HEX 輸出（或 DEC 都可以）
+  output.println(value, HEX);
+  output.println();
 } 
 
